@@ -1,0 +1,203 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+    <div class="modal" tabindex="-1" role="dialog" id="myModalEdit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: rgba(38,185,154,.88);height:45px">
+                    <h5 class="modal-title"
+                        style="color:white; font-size: large;font-family: Helvetica, Arial, sans-serif;"><b>Save</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"/>
+                        <span aria-hidden="true">&times;</span></h5>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 50px">
+                    <p>Are you sure you want to save the changes?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-success" id="saveChanges"                    
+                    onclick="location.href='{{ path('/admin/section/update/' ~section.id.toString()) }}'">
+                    Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="myModalDelete">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #C82829;height:45px">
+                    <h5 class="modal-title"
+                        style="color:white; font-size: large;font-family: Helvetica, Arial, sans-serif;"><b>Delete</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"/>
+                        <span aria-hidden="true">&times;</span></h5>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 50px">
+                    <p>Are you sure you want to delete the Section?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-danger" id="deleteItem"
+                            onclick="location.href='{{ path('/admin/section/delete/' ~section.id.toString()) }}'">Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2> Edit Section ({{ section.number }}) </h2>
+                        <span class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3" align="right">
+                        <button type="button" id="deleteBtn" class="btn btn-danger" data-toggle="modal"
+                                data-target="#myModalDelete" style="float: right">Delete</button>
+                    </span>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal form-label-left" method="post"
+                              action={{ concat('/admin/section/update/', section.id) }}>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Course Number
+                            </label>
+
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select id="cnumber" name="cnumber" class="form-control col-md-7 col-xs-12">
+                                        {% for course in courses %}
+                                        {% if course.equals(section.course) %}
+                                            <option value="{{ course.id }}" selected>{{ course.department.abbreviation }} {{ course.number }}</option>
+                                        {% else %}
+                                            <option value="{{ course.id }}">{{ course.department.abbreviation }} {{ course.number }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+
+                                    </select>
+			                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Section Number
+                            </label>                            
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="number" name="number" type="text" 
+					class="form-control col-md-7 col-xs-12" value="{{ section.number }}" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Semester
+                            </label>
+
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select id="semester" name="semester" class="form-control col-md-7 col-xs-12">
+                                        {% for semester in semesters %}
+                                        {% if semester.equals(section.semester) %}
+                                            <option value="{{ semester.id }}" selected>{{ semester.year }} {{ semester.season }}</option>
+                                        {% else %}
+                                            <option value="{{ semester.id }}">{{ semester.year }} {{ semester.season }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                </select>
+			                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Instructor
+                            </label>
+
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select id="instructor" name="instructor" class="form-control col-md-7 col-xs-12">
+
+
+                                        {% for instructor in instructors %}
+                                            {% if instructor.equals(section.instructors.get(0)) %}
+                                                <option value="{{ instructor.id }}" selected>{{ instructor.firstName }} {{ instructor.lastName }}</option>
+                                            {% else %}
+                                                <option value="{{ instructor.id }}">{{ instructor.firstName }} {{ instructor.lastName }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    </select>
+			                </div>
+                        </div>
+
+	                    <div class="form-group">
+	                        <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+	                            Teaching Assistants
+	                        </label>	                        
+	                        <div class="col-md-6 col-sm-6 col-xs-12">
+	                            <textarea id="tassistant" name="tassistant" rows="7"
+	                                      class="form-control col-md-7 col-xs-12">{{ section.tassistant }}</textarea>
+	                        </div>
+	                    </div>
+
+			    <div class="form-group">
+	                        <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+	                            Admin Notes
+	                        </label>
+	                        <div class="col-md-6 col-sm-6 col-xs-12">
+	                            <textarea id="description" name="description" rows="7"
+	                                      class="form-control col-md-7 col-xs-12">{{ section.description }}</textarea>
+	                        </div>
+	                    </div>
+
+                        <div class="form-group">
+                            <div class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Upload Roster
+                            </div>
+
+                            <div class="control-label col-md-3 col-sm-3 col-xs-12">
+                                <button class="btn btn-secondary" type="button"
+                                   onclick="location.href='{{ path('/admin/section/' ~section.id.toString() ~'/upload') }}'">
+                                   Update
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                    <button class="btn btn-secondary" type="button"
+                                            onclick="location.href='/admin/section'">
+                                        Cancel
+                                    </button>
+                                    <button id="form_submit" class="btn btn-success" type="submit" data-toggle="modal"
+                                            data-target="#myModalEdit">
+                                        Submit
+                                    </button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $('#form_submit').on('click', function (event) {
+            event.preventDefault();
+        });
+        $('#saveChanges').on('click', function () {
+            $('form').submit();
+        });
+        $('#deleteBtn').on('click', function (event) {
+            event.preventDefault();
+        });
+    </script>
+{% endblock %}

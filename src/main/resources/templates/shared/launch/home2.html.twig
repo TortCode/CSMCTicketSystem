@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>CSMC - Computer Science Mentor Center</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.png">
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/launch.css" rel="stylesheet" />
+</head>
+
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-5">
+            <img height="135" width="135" src="https://i.ibb.co/8m2cgqd/Black-White-Minimalist-Business-Logo-2-removebg-preview.png" alt="CSMC">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item mt-3">
+                        <a class="btn btn-outline-light btn-md px-3 me-sm-3" href="{{ path('/login') }}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center justify-content-center">
+                <div class="col-lg-8 col-xl-7 col-xxl-6">
+                    <div class="my-5 text-center text-xl-start">
+                        <h1 class="display-5 fw-bolder text-white mb-2">Welcome to the UTD Computer Science Mentor Center</h1>
+                        <p class="lead fw-normal text-white-50 mb-4">CSMC at UTD is not just a place for learning;
+                            it's a community where passion meets guidance, and together, we're unlocking the
+                            limitless possibilities of computer science.</p>
+                        <div class="text-end mb-5 mb-xl-0">
+                            <a class="text-decoration-none" href="https://cs.utdallas.edu/community/tutoring/">
+                                More
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center">
+                    <iframe width="600" height="400" src="https://www.youtube.com/embed/fse-_1a-VOU"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Announcements-->
+    {# Announcements #}
+    {% include 'announcements.html.twig' %}
+
+    <!-- Info-->
+    <section class="bg-light py-5">
+        <div class="container px-5 my-5">
+            <div class="text-center mb-5">
+                <h1 class="fw-bolder">In-Person Times ~ Supported Courses</h1>
+                <p class="lead fw-normal text-muted mb-0">SPRING 2025</p>
+            </div>
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card mb-xl-0">
+                        <div class="card-body p-5">
+                            <div class="small text-uppercase fw-bold mb-4">
+                                <span style="color: green;">In-person times</span>
+                            </div>
+                            <ul class="list-unstyled mb-2">
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>Monday : </strong> 10:00 AM - 7:00 PM
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>Tuesday : </strong> 10:00 AM - 7:00 PM
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>Wednesday : </strong> 10:00 AM - 7:00 PM
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>Thursday : </strong> 10:00 AM - 7:00 PM
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>Friday : </strong> 10:00 AM - 5:30 PM
+                                </li>
+                                <li class="text-muted mb-3">
+                                    <i class="bi bi-x"></i>
+                                    <strong>Saturday : </strong> Closed
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-x"></i>
+                                    <strong>Sunday : </strong> Closed
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-xl-8">
+                    <div class="card mb-2 mb-xl-0">
+                        <div class="card-body p-5">
+                            <div class="small text-uppercase fw-bold pb-4">
+                                <span style="color: red;">Supported Courses</span>
+                            </div>
+                            <ul class="list-unstyled mb-2">
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>CS 1436 : </strong> Programming Fundamentals
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>CS 1337 : </strong> Computer Science I
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>CS 2305 : </strong> Discrete Mathematics for Computing I
+                                </li>
+
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>CS 2336 : </strong> Computer Science II Java
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>CS 2337 : </strong> Computer Science II C++
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>CS 2340 : </strong> Computer Architecture
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check text-primary"></i>
+                                    <strong>SE 3306 : </strong> Mathematical Foundations for SE
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Locations #}
+    {% include 'locations.html.twig' %}
+
+    <section class="py-5 bg-light">
+        <div class="container px-5">
+            <div class="row gx-5">
+                <div class="col-xl-8">
+                    <div class="text-center">
+                        <div class="fs-4 m-4 fst-italic">"At CSMC, we believe in nurturing not just code but the
+                            boundless potential of every aspiring computer scientist, lighting the way for
+                            innovation and excellence."</div>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <!--                            <div class="fw-bold">-->
+                            <!--                                Jason Smith-->
+                            <!--                                <span class="fw-bold text-primary mx-1">/</span>-->
+                            <!--                                Director of CSMC-->
+                            <!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card border-0 h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex h-100 align-items-center justify-content-center">
+                                <div class="text-center">
+                                    <div class="h6 fw-bolder">Contact</div>
+                                    <p class="mb-4">
+                                        Prof. Jason Smith - Director of CSMC
+                                    </p>
+                                    <p class="text-muted mb-4">
+                                        For inquiries, email us at
+                                        <br />
+                                        <a href="#!">csmc@utdallas.edu</a>
+                                    </p>
+                                    <div class="h6 fw-bolder">Follow us</div>
+                                    <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter"></i></a>
+                                    <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-facebook"></i></a>
+                                    <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-linkedin"></i></a>
+                                    <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Footer-->
+<footer class="bg-dark py-4 mt-auto">
+    <div class="container px-5">
+        <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+            <div class="col-auto">
+                <div class="small m-0 text-white">Copyright &copy; CSMC @ UTD 2023</div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+</body>
+
+</html>

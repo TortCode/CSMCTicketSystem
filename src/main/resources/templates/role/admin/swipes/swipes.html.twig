@@ -1,0 +1,76 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+    <table id="swipes" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Time</th>
+                <th>IP</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        var table = $('#swipes').DataTable({
+                        searching: true,
+                        ordering: true,
+                        paging: true,
+                        processing: true,
+                        serverSide: true,
+                        info: true,
+                        deferRender: true,
+                        columnDefs: [{
+                                            "targets": [ 0 ],
+                                            "orderable": true
+                                        }],
+                        ajax: {
+                            url: window.location.protocol + '//' + window.location.host + '/admin/swipes/queryByPage',
+                            type: 'post',
+                            contentType: 'application/json',
+                            dataSrc: function (response) {
+
+                                var data = response.data; // your data list
+
+                                var all = [];
+
+                                for (var i = 0; i < data.length; i++) {
+                                    var row = {
+                                        user: data[i].user,
+                                        time: data[i].time,
+                                        ip: data[i].ipAddress
+                                    };
+                                    all.push(row);
+                                }
+                                return all;
+                            },
+                            data: function (d) {
+                                console.log(d)
+                                return JSON.stringify(d);
+                            }
+
+                        },
+                        columns: [
+                            {data: 'user'},
+                            {data: 'time'},
+                            {data: 'ip'}
+                        ]
+                    });
+
+                    $('.dataTables_filter input').unbind().keyup(function() {
+                                    var value = $(this).val();
+                                    console.log(value)
+
+                                    table.search(value).draw();
+                    });
+    </script>
+    {{ parent() }}
+{% endblock %}

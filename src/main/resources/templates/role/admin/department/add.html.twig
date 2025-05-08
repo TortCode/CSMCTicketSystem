@@ -1,0 +1,60 @@
+{% extends "../base.html.twig" %}
+{% block body %}
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2> Create Department</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        {# Display form errors#}
+
+                        <br/>
+
+                        <form class="form-horizontal form-label-left input_mask" method="post"
+                              action="/admin/department/create/submit">
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Name
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="name" name="name" type="text" class="form-control col-md-7 col-xs-12"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Abbreviation
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="abbreviation" name="abbreviation" type="text"
+                                           class="form-control col-md-7 col-xs-12" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight: 200">
+                                    Admin Notes
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <textarea id="adminNotes" name="adminNotes"
+                                              class="form-control col-md-7 col-xs-12"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-5">
+                                <button type="button" class="btn btn-secondary"
+                                        onclick="location.href='/admin/department'">Cancel
+                                </button>
+                                <button class="btn btn-success" type="submit">
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

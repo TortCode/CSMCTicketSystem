@@ -1,0 +1,129 @@
+{% extends '../base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        th, td {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal form-label-left" method="post"
+                              action="/admin/schedule/timesheets/report">
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Mentor
+                                </label>
+                                {#{{ form_errors(form.department) }}#}
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+
+                                    <select id="mentor" name="mentor" class="form-control col-md-7 col-xs-12">
+                                        {% for mentor in mentors %}
+                                        {% set selected = '' %}
+
+                                         {% if adminTimesheetResultDTO.getUserId() == mentor.userId %}
+                                          {% set selected = 'selected' %}
+                                          {% endif %}
+
+                                            <option value="{{mentor.userId}}" {{selected}} > {{ mentor.mentorName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Start
+                                </label>
+                                {#{{ form_errors(form.number) }}#}
+                                {% if adminTimesheetResultDTO.getStartDate() %}
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                       <input id="startdate" name="startdate" type="date" value = "{{ adminTimesheetResultDTO.getStartDate() | date('yyyy-MM-dd') }}" class="form-control col-md-7 col-xs-12" required>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input id="startdate" name="startdate" type="date"
+                                               class="form-control col-md-7 col-xs-12" required>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    End
+                                </label>
+                                {#{{ form_errors(form.name) }}#}
+                                {% if adminTimesheetResultDTO.getEndDate() %}
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input id="enddate" name="enddate" type="date" value = "{{ adminTimesheetResultDTO.getEndDate() | date('yyyy-MM-dd') }}" class="form-control col-md-7 col-xs-12" required>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input id="enddate" name="enddate" type="date"  class="form-control col-md-7 col-xs-12" required>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <button class="btn btn-success" type="submit">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+
+                {% if (adminTimesheetResultDTO.getTimesheet() is not null)%}
+
+                <h2 class="content_title">Times for {{ adminTimesheetResultDTO.getMentorName()}} from {{ adminTimesheetResultDTO.getStartDate()|date('MM-dd-yyyy')}} to {{ adminTimesheetResultDTO.getEndDate() |date('MM-dd-yyyy')}}</h2>
+                    <table id="table" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <td>Day</td>
+                            <td>Date</td>
+                            <td>Time In</td>
+                            <td>Time Out</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for time in adminTimesheetResultDTO.getTimesheet().keySet() %}
+                            <tr>
+                                <td rowSpan={{adminTimesheetResultDTO.getTimesheet().get(time).keySet().size()}}>{{time|date('EEEE')}}</td>
+                                <td rowSpan={{adminTimesheetResultDTO.getTimesheet().get(time).keySet().size()}}>{{time|date('MM-dd-yyyy')}}</td>
+                                {% for timeIn in adminTimesheetResultDTO.getTimesheet().get(time).keySet() %}
+                                    {% if (loop.first) %}
+                                       {% if timeIn is not null %}
+                                            <td>{{timeIn|date('hh:mm a')}}</td>
+                                            <td>{{adminTimesheetResultDTO.getTimesheet().get(time).get(timeIn)|date('hh:mm a')}}</td>
+                                       {% else %}
+                                           <td colspan="2">You have no times</td>
+                                       {% endif %}
+                                    {% else %}
+                                        {% if timeIn is not null %}
+                                            <tr>
+                                                <td>{{timeIn|date('hh:mm a')}}</td>
+                                                <td>{{adminTimesheetResultDTO.getTimesheet().get(time).get(timeIn)|date('hh:mm a')}}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                    </table>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+    <h2>Scheduled Sessions</h2>
+    <table id="sessions" class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Section(s)</th>
+            <th>Topic</th>
+            <th>Check In Time</th>
+            <th>Check Out Time</th>
+            <th>Grade</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for attendance in sessions %}
+            <tr>
+                <td>
+                    {% for section in attendance.sections %}
+                        {{- section -}}
+                    {% endfor %}
+                </td>
+                <td>{{ attendance.topic }}</td>
+                <td>{{ attendance.checkInTime }}</td>
+                <td>{{ (attendance.checkOutTime) }}</td>
+                <td>
+                    {% if attendance.graded %}
+                        {% if attendance.grade is not empty %}
+                            {% if attendance.numericGrade %}
+                                {{ attendance.grade }}
+                            {% else %}
+                                {{ (attendance.grade) ? 'Pass' : 'Fail' }}
+                            {% endif %}
+                        {% else %}
+                            Pending
+                        {% endif %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h2>Quizzes</h2>
+    <table id="quizzes" class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Section(s)</th>
+            <th>Topic</th>
+            <th>Check In Time</th>
+            <th>Check Out Time</th>
+            <th>Grade</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for attendance in quizzes %}
+            <tr>
+                <td>{{ attendance.sectionNumber }}</td>
+                <td>{{ attendance.topic }}</td>
+                <td>{{ attendance.checkInTime }}</td>
+                <td>{{ (attendance.checkOutTime) }}</td>
+                <td>
+                    {% if attendance.graded %}
+                        {% if attendance.grade is not empty %}
+                            {% if attendance.numericGrade %}
+                                {{ attendance.grade }}
+                            {% else %}
+                                {{ (attendance.grade) ? 'Pass' : 'Fail' }}
+                            {% endif %}
+                        {% else %}
+                            Pending
+                        {% endif %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h2>Walk-In Sessions</h2>
+    <table id="walkins" class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Course</th>
+            <th>Topic</th>
+            <th>Activity</th>
+            <th>Mentors</th>
+            <th>Check In Time</th>
+            <th>Check Out Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for attendance in walkins %}
+            <tr>
+                <td>{{ attendance.courseNumber }}</td>
+                <td>{{ attendance.topic }}</td>
+                <td>{{ attendance.activityName }}</td>
+                <td>{{ attendance.mentors }}</td>
+                <td>{{ attendance.checkInTime }}</td>
+                <td>{{ (attendance.checkOutTime) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            $('#sessions').DataTable({
+                paging: false,
+                ordering: true,
+                order: [[3, 'desc']],
+                searching: true
+            });
+            $('#quizzes').DataTable({
+                paging: false,
+                ordering: true,
+                order: [[3, 'desc']],
+                searching: true
+            });
+            $('#walkins').DataTable({
+                paging: false,
+                ordering: true,
+                order: [[5, 'desc']],
+                searching: true
+            });
+        });
+    </script>
+{% endblock %}

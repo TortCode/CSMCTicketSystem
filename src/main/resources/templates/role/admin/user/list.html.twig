@@ -1,0 +1,198 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="page-title">
+                        <div class="title_left">
+                            <h3>Users</h3>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <ul class="nav navbar-left panel_toolbox">
+                                        <li>
+                                            <button id="all" class="btn btn-dark">All Users</button>
+                                        </li>
+                                        <li><a><i></i></a>
+                                        </li>
+                                    </ul>
+
+                                    <ul class="nav navbar-left panel_toolbox">
+                                        <li>
+                                            <button id="admin" class="btn btn-dark">Admin</button>
+                                        </li>
+                                        <li><a><i></i></a>
+                                        </li>
+                                    </ul>
+
+                                    <ul class="nav navbar-left panel_toolbox">
+                                        <li>
+                                            <button id="instructor" class="btn btn-dark">Instructor</button>
+                                        </li>
+                                        <li><a><i></i></a>
+                                        </li>
+                                    </ul>
+
+                                    <ul class="nav navbar-left panel_toolbox">
+                                        <li>
+                                            <button id="mentor" class="btn btn-dark">Mentor</button>
+                                        </li>
+                                        <li><a><i></i></a>
+                                        </li>
+                                    </ul>
+
+                                    <ul class="nav navbar-left panel_toolbox">
+                                        <li>
+                                            <button id="student" class="btn btn-dark">Student</button>
+                                        </li>
+                                        <li><a><i></i></a>
+                                        </li>
+                                    </ul>
+                                    <ul class="nav navbar-right panel_toolbox">
+                                        <li>
+                                            <button class="btn btn-primary"
+                                                    onclick="location.href='/admin/users/user/create'">New User
+                                            </button>
+                                        </li>
+                                        <li><a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="clearfix"></div>
+                                </div>
+
+                                <div class="x_content">
+                                    <p class="text-muted font-13 m-b-30">
+                                    </p>
+                                    <table id="datatable" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Netid</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Roles</th>
+                                            <th>Edit</th>
+                                            <th>Impersonate</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        $(function () {
+
+            var render_edit = function (data, type, row) {
+                return '<a class="btn btn-success" href="{{ path(concat('/admin/users/user/update/')) }}' + row.userId + '">Update</a>';
+            };
+
+            var render_impersonate = function (data, type, row) {
+                /*remove print */
+                console.log("render_impersonate row",row);
+                return '<a class="btn btn-warning" href="{{ path(concat('/impersonate?username=')) }}' + row.username + '">Impersonate</a>';
+            };
+
+            var table = $('#datatable').DataTable({
+                searching: true,
+                ordering: true,
+                paging: true,
+                processing: true,
+                serverSide: true,
+                info: true,
+                deferRender: true,
+                columnDefs: [{
+                    "targets": [ 0, 1, 2 ],
+                    "orderable": true
+                }],
+                ajax: {
+                    url: window.location.protocol + '//' + window.location.host + '/admin/users/user/queryByPage',
+                    type: 'post',
+                    contentType: 'application/json',
+                    dataSrc: function (response) {
+
+                        var data = response.data; // your data list
+
+                        var all = [];
+
+                        for (var i = 0; i < data.length; i++) {
+                            var row = {
+                                userId: data[i].userId,
+                                username: data[i].userName,
+                                firstName: data[i].firstName,
+                                lastName: data[i].lastName,
+                                roles: data[i].roles
+                            };
+                            all.push(row);
+                        }
+                        return all;
+                    },
+                    data: function (d) {
+                        console.log(d)
+                        return JSON.stringify(d);
+                    }
+
+                },
+                columns: [
+                    {data: 'username'},
+                    {data: 'firstName'},
+                    {data: 'lastName'},
+                    {data: 'roles'},
+                    {render: render_edit, searchable: false, orderable: false},
+                    {render: render_impersonate, searchable: false, orderable: false}
+                ]
+            });
+
+
+            document.getElementById("all").addEventListener("click",changeTab)
+            document.getElementById("admin").addEventListener("click",changeTab)
+            document.getElementById("instructor").addEventListener("click",changeTab)
+            document.getElementById("mentor").addEventListener("click",changeTab)
+            document.getElementById("student").addEventListener("click",changeTab)
+
+            function changeTab(event){
+                console.log(event.target.id);
+                if(event.target.id!='all') {
+                    table.column(3).search(event.target.id).draw();
+                }else{
+                    table.search('');
+                    table.column(3).search('').draw();
+                }
+            }
+
+            $('.dataTables_filter input').unbind().keyup(function() {
+                var value = $(this).val();
+                console.log(value)
+                table.column(3).search('');
+                table.search(value).draw();
+            });
+
+        });
+
+    </script>
+
+    {{ parent() }}
+{% endblock %}
+
+

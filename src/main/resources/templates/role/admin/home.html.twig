@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="chart-container" style="position: relative; width: 100%; height: 100%;">
+        <form class="form-horizontal form-label-left" method="post"
+              action="/admin/home/lookUp">
+            <div class="chart-container" style="position: relative; width: 100%; height: 100%;">
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                        Date
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input id="date" name="date" type="date" value={{date}}  class="form-control col-md-7 col-xs-12" />
+                    </div>
+                </div>
+                <button class="btn btn-success" type="submit">
+                    Submit
+                </button>
+            </div>
+
+        </form>
+
+        <canvas id="chart"></canvas>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+    <script>
+        $(function () {
+            var data = {
+                labels: [
+                    {% for time in keys %}
+                    "{{ time|date("yyyy/MM/dd H:mm") }}",
+                    {% endfor %}
+                ],
+                datasets: [
+                    {
+                        label: '# of mentor swipes',
+                        data: [
+                            {% for interval in swipes %}
+                                {% set count = 0 %}
+                                {% for swipe in interval %}
+                                    {% for role in swipe.user.roles %}
+                                        {% if role.name == "mentor" %}
+                                            {% set count = count + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {{ count }},
+                            {% endfor %}
+                        ],
+                        fill: false,
+                        backgroundColor: '#C75B12',
+                        borderColor: '#C75B12'
+                    },
+                    {
+                        label: '# of student swipes',
+                        data: [
+                            {% for interval in swipes %}
+                                {% set count = 0 %}
+                                {% for swipe in interval %}
+                                    {% for role in swipe.user.roles %}
+                                        {% if role.name == "student"  and length(swipe.user.roles) == 1 %}
+                                            {% set count = count + 1 %}
+                                        {% endif %}
+{#                                    {% else %}#}
+{#                                        {% set count = count + 1 %}#}
+                                    {% endfor %}
+                                {% endfor %}
+                            {{ count }},
+                            {% endfor %}
+                        ],
+                        fill: false,
+                        backgroundColor: '#008542',
+                        borderColor: '#008542'
+                    },
+                    {
+                        label: '# of total swipes',
+                        data: [
+                            {% for interval in swipes %}
+                            {{ interval|length }},
+                            {% endfor %}
+                        ],
+                        fill: false,
+                        backgroundColor: '#000000',
+                        borderColor: '#000000'
+                    }
+                ],
+            };
+            var options = {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: "Swipes for Today"
+                },
+                legend: {
+                    display: true,
+                    position: 'right'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0
+                        }
+                    }]
+                }
+            };
+
+            var ctx = $('#chart');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        });
+    </script>
+{% endblock %}

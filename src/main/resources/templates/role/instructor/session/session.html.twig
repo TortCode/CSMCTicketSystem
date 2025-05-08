@@ -1,0 +1,108 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+    <h2>{{ session.topic }}</h2>
+    <dl class="dl-horizontal">
+        <dt>Description</dt>
+        <dd>
+            {% if session.description == "" %}
+                None
+            {% else %}
+                {{ session.description }}
+            {% endif %}
+        </dd>
+        <dt>Student Instructions</dt>
+        <dd>
+            {% if session.studentInstructions == "" %}
+                None
+            {% else %}
+                {{ session.studentInstructions }}
+            {% endif %}
+        </dd>
+        <dt>Mentor Instructions</dt>
+        <dd>
+            {% if session.mentorInstructions == "" %}
+                None
+            {% else %}
+                {{ session.mentorInstructions }}
+            {% endif %}
+        </dd>
+        <dt>Graded</dt>
+        <dd>
+            {% if session.graded == true %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </dd>
+        {% if session.graded %}
+            <dt>Grading Scheme</dt>
+            <dd>
+                {% if session.numericGrade == true %}
+                    Numeric
+                {% else %}
+                    Pass/Fail
+                {% endif %}
+            </dd>
+        {% endif %}
+        <dt>Materials</dd>
+        {% for file in session.files %}
+            {% if not loop.first %}
+                <dt></dt>
+            {% endif %}
+            <dd>
+                <a href="{{ path(concat(concat('/instructor/session/schedule/session/view/', session.id), concat('/download/', file.id))) }}">{{ file.name }}</a>
+            </dd>
+        {% endfor %}
+        {% if session.files is empty %}
+            <dd>None</dd>
+        {% endif %}
+        <dt>Dates</dt>
+        <dd class="sessionDate">
+            {{ session.startDate}} ~ {{ session.endDate }}
+        </dd>
+        <dt>Time Slots</dt>
+        {% for timeslot in session.timeslots %}
+            <dd class="timeSlots">
+                {{ timeslot.startTime}}
+                ~ {{ timeslot.endTime }}
+            </dd>
+            {% if not loop.last %}
+                <dt></dt>
+            {% endif %}
+        {% endfor %}
+        {% if session.timeslots is empty %}
+            <dd>None</dd>
+        {% endif %}
+    </dl>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(".timeSlots").each(function(){
+            var timeSlot = $(this).html().trim();
+            var start = moment(new Date(timeSlot.substring(0, timeSlot.indexOf("~")).trim()));
+            var end = moment(new Date(timeSlot.substring(timeSlot.indexOf("~") + 1).trim()));
+            if(start.isValid() && end.isValid()){
+                var formattedStart = start.format("MM/DD/YY hh:mm A");
+                var formattedEnd = end.format("hh:mm A");
+                $(this).html(formattedStart + " - " + formattedEnd);
+            } else {
+                $(this).html("N/A");
+            }
+
+        });
+
+        $(".sessionDate").each(function(){
+            var timeSlot = $(this).html().trim();
+            var start = moment(new Date(timeSlot.substring(0, timeSlot.indexOf("~")).trim()));
+            var end = moment(new Date(timeSlot.substring(timeSlot.indexOf("~") + 1).trim()));
+            if(start.isValid() && end.isValid()){
+                var formattedStart = start.format("MM/DD/YY");
+                var formattedEnd = end.format("MM/DD/YY");
+                $(this).html(formattedStart + " - " + formattedEnd);
+            } else {
+                $(this).html("N/A");
+            }
+        });
+    </script>
+{% endblock %}

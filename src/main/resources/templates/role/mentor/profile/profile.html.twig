@@ -1,0 +1,186 @@
+{% extends '../../../shared/base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" th:href=@{assets/css/global.css}/>
+    <link rel="stylesheet" type="text/css" th:href=@{assets/css/mentor_profile.css}/>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.6/cropper.min.css">
+
+{% endblock %}
+
+{% block body %}
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+                    <div class="x_content">
+                            <div class="main-name">
+                                <div class="row">
+                                    <div class="col-md-9 align-middle  ">
+                                        <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        <br/>
+                        <form class="form-horizontal form-label-left" method="post" action="{{ path(concat('/profile/edit/', user.username))}}">
+                            <input type="hidden" name="userid" value="{{ user.username }}">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Preferred Name :
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="preferredName" name="preferredName" type="text" class="form-control col-md-7 col-xs-12" value="{{ user.profile.preferredName }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Birth date :
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="birthDate" name="birthDate" type="text" class="form-control col-md-7 col-xs-12" value="{{ (user.info.dateOfBirth is empty) ? "" : (user.info.dateOfBirth) | date("m/d/Y") }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Phone number :
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="phoneNumber" name="phoneNumber" type="text" class="form-control col-md-7 col-xs-12" value="{{ user.info.phoneNumber}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                               Skills
+                               </label>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                               C++ :
+                               </label>
+                               <div class="col-md-4 col-sm-4 col-xs-10">
+                                 <input type="range" name="cppRange" class="form-range" min="0" max="5" step="1" id="cpprange" value="{{cpp}}">
+                               </div>
+                               <div class="col-2" id="cpprangevalue"> </div>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                               Java :
+                               </label>
+                               <div class="col-md-4 col-sm-4 col-xs-10">
+                                 <input type="range" name="javaRange" class="form-range" min="0" max="5" step="1" id="javarange" value="{{java}}">
+                               </div>
+                               <div class="col-2" id="javarangevalue"> </div>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Data Structures and Algorithms :
+                               </label>
+                               <div class="col-md-4 col-sm-4 col-xs-10">
+                                 <input type="range" name="dsRange" class="form-range" min="0" max="5" step="1" id="dsrange" value="{{ds}}">
+                               </div>
+                               <div class="col-2" id="dsrangevalue"> </div>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Discrete Math :
+                               </label>
+                               <div class="col-md-4 col-sm-4 col-xs-10">
+                                 <input type="range" name="dmRange" class="form-range" min="0" max="5" step="1" id="dmrange" value="{{dm}}">
+                               </div>
+                               <div class="col-2" id="dmrangevalue"> </div>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Computer Architecture :
+                               </label>
+                               <div class="col-md-4 col-sm-4 col-xs-10">
+                                 <input type="range" name="caRange" class="form-range" min="0" max="5" step="1" id="carange" value="{{ca}}">
+                               </div>
+                               <div class="col-2" id="carangevalue"> </div>
+                            </div>
+
+                            <div class="form-group">
+                               <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Food Preferences :
+                               </label>
+                               <div class="col-md-4 col-sm-4 col-xs-10">
+                                    {% for pref in foodPreferences %}
+                                        <input type="checkbox" name="selectedOptions" value="{{ pref }}"> {{ pref }}<br>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="ln_solid"></div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                    <button class="btn btn-secondary" type="button"
+                                            onclick="location.href=''">
+                                        Cancel
+                                    </button>
+                                    <button id="form_submit" class="btn btn-success" type="submit"
+                                            data-toggle="modal" data-target="#myModalEdit">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const $cpprange = $('#cpprange');
+        const $cpprangevalue = $('#cpprangevalue');
+        $cpprangevalue.text($cpprange.val()+'/5');
+        $cpprange.on('input', function() {
+          $cpprangevalue.text($(this).val()+'/5');
+        });
+
+        const $javarange = $('#javarange');
+        const $javarangevalue = $('#javarangevalue');
+        $javarangevalue.text($javarange.val()+'/5');
+        $javarange.on('input', function() {
+          $javarangevalue.text($(this).val()+'/5');
+        });
+
+        const $dsrange = $('#dsrange');
+        const $dsrangevalue = $('#dsrangevalue');
+        $dsrangevalue.text($dsrange.val()+'/5');
+        $dsrange.on('input', function() {
+          $dsrangevalue.text($(this).val()+'/5');
+        });
+
+        const $dmrange = $('#dmrange');
+        const $dmrangevalue = $('#dmrangevalue');
+        $dmrangevalue.text($dmrange.val()+'/5');
+        $dmrange.on('input', function() {
+          $dmrangevalue.text($(this).val()+'/5');
+        });
+
+        const $carange = $('#carange');
+        const $carangevalue = $('#carangevalue');
+        $carangevalue.text($carange.val()+'/5');
+        $carange.on('input', function() {
+          $carangevalue.text($(this).val()+'/5');
+        });
+
+    </script>
+{% endblock %}

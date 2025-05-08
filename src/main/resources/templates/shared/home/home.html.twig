@@ -1,0 +1,104 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+    <h3>Home
+        <small class="pull-right">
+            {{ "now"|date("d, MMMMMMMMM Y") }}
+        </small>
+    </h3>
+    </br>
+    {# Announcements #}
+    {% include 'announcements.html.twig' %}
+
+    <!---<h4>
+        <b><span style="color:red">The CSMC is closed for the summer, however support is available through the Student Success Center.</span>
+        </br>
+        </b>
+        <b>The SSC has hired CSMC mentors to support the following courses:
+        <ul>
+            <li>1436</li>
+            <li>1337</li>
+            <li>2305</li>
+            <li>2336</li>
+            <li>2340</li>
+            <li>3305</li>
+        </ul>
+        </b>
+        </br>
+        <b>The SSC will provide support through virtual drop-in tutoring from June 1 - August 4 at the following times: </br>
+        <ul>
+            <li>Mondays: 11:00 AM - 5:00 PM</li>
+            <li>Tuesdays: 2:00  - 7:00 PM</li>
+            <li>Wednesdays: 2:00 - 7:00 PM</li>
+            <li>Thursdays: 2:00 - 5:00 PM</li>
+        </ul>
+        </br>
+        </b>
+        <b>Virtual drop-in tutoring will be available in eLearning on June 1 through the Peer Tutoring eLearning Organization.  For more information about the SSC, please visit their website:<a href="https://studentsuccess.utdallas.edu/programs/peer-tutoring/" target="_top" style="color:blue">Here.</a>
+        </br>
+        </b>
+    </h4>
+    <h4>
+        <span style="color:red">Please note that the CSMC is operating with reduced staff which may create slightly longer wait times during high traffic periods. As higher attendance areas are identified, we will move staff around as necessary to better facilitate all of our students.</span>
+        <span style="color:red">Please note that the CSMC is closed for the Fall semester. The CSMC will reopen on 24th January.</span>
+    </h4>--->
+    <!---<h4>
+        The CSMC will be available in-person modality for the Fall semester.
+    </h4>--->
+    <h5>
+        Please watch the video below for instructions on how to access and utilize the CSMC website.<br>
+    </h5>
+    <h4>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/fse-_1a-VOU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </h4>
+
+    <h4> The following in-person times:</h4>
+    <h5>
+    <dl class="dl-horizontal">
+        <dt style="text-align: left;">Monday - Thursdays</dt>
+        <dd style="text-align: left;">10:00 AM - 7:00 PM</dd>
+        <dt style="text-align: left;">Friday   </dt>
+        <dd style="text-align: left;">10:00 AM - 5:30 PM</dd>
+        <dt style="text-align: left;">Saturday   </dt>
+        <dd style="text-align: left;">Closed</dd>
+        <dt style="text-align: left;">Sunday   </dt>
+        <dd style="text-align: left;">Closed</dd>
+
+
+    </dl>
+    </h5>
+    <!---<h5>If you do not see the CSMC Organization in eLearning, send an email (with your netid) explaining the situation to <a href="mailto:csmc@utdallas.edu" target="_top" style="color:blue">csmc@utdallas.edu</a> and we will be glad to help you.
+    </h5>--->
+    <h4> Supported Courses</h4>
+    <h5>
+    <dl class="dl-horizontal">
+        <dt style="text-align: left;">CS 1436</dd>
+        <dd style="text-align: left;">Programming Fundamentals</dd>
+        <dt style="text-align: left;">CS 1337</dd>
+        <dd style="text-align: left;">Computer Science I</dd>
+        <dt style="text-align: left;">CS 2305</dd>
+        <dd style="text-align: left;">Discrete Mathematics for Computing I</dd>
+        <dt style="text-align: left;">CS 2336</dd>
+        <dd style="text-align: left;">Computer Science II Java</dd>
+        <dt style="text-align: left;">CS 2337</dd>
+        <dd style="text-align: left;">Computer Science II C++</dd>
+        <dt style="text-align: left;">CS 2340</dd>
+        <dd style="text-align: left;">Computer Architecture</dd>
+        <dt style="text-align: left;">SE 3306</dd>
+        <dd style="text-align: left;">Mathematical Foundations for SE</dd>
+    </dl>
+    </h5>
+
+    <!---{#     Opperation Hours #}
+    {% include 'hours.html.twig' %}--->
+
+    {# Locations #}
+    {% include 'locations.html.twig' %}
+
+    <!---{# Contact #}
+    <h3>Contact Information</h3>
+    <dl class="dl-horizontal">
+        <dt>Email</dt>
+        <dd><a href="mailto:csmc@utdallas.edu" target="_top">csmc@utdallas.edu</a></dd>
+    </dl>--->
+    </br>
+{% endblock %}

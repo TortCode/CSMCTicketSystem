@@ -1,0 +1,97 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+    <div class="form-group">
+        <div class="control-label">
+            Topic
+        </div>
+
+        <div class="bt-flabels__wrapper">
+            <input class="form-control" type="text" id="topic" name="topic" value="{{form.topic  }}" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="control-label">
+            Type
+        </div>
+        <select id="sessionType" name="sessionType" class="form-control col-md-7 col-xs-12">
+            {% for type in form.types %}
+                <option value={{ type }} {% if type == form.type %}selected{% endif %}>{{ type }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <div class="control-label">
+            Student Instructions
+        </div>
+        <div class="bt-flabels__wrapper">
+            <textarea class="form-control" id="studentInstruction" name="studentInstruction">{{ form.studentInstructions }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="control-label">
+            Start Date
+        </div>
+        <div class="bt-flabels__wrapper">
+            <input class="form-control" type="date" id="startDate" name="startDate" value="{{form.startDate  }}" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="control-label">
+            End Date
+        </div>
+        <div class="bt-flabels__wrapper">
+            <input class="form-control" type="date" id="endDate" name="endDate" value="{{form.endDate  }}" required>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="control-label">
+            Sections
+        </div>
+        <div class="bt-flabels__wrapper">
+            <textarea class="form-control" id="sections" name="sections" required>{{ form.sections }}</textarea>
+        </div>
+    </div>
+
+
+{#    <div class="form-group">#}
+{#        <div class="control-label">#}
+{#            <label for="form_file" class="required">File</label>#}
+{#        </div>#}
+{#        <div class="bt-flabels__wrapper">#}
+{#            <input type="file" id="form_file" name="file" required="required" class="form-control" accept=".csv,text/csv,.xlsx">#}
+{#        </div>#}
+{#    </div>#}
+
+    <div class="form-group">
+        <div class="control-label">
+            Uploaded files
+        </div>
+        <div>
+            {% for file in form.uploadedFiles %}
+                <div>
+                    <input class="check-box" type="checkbox" id="{{ file }}" name="{{ file }}" checked>
+                    <label for="{{ file }}">{{file}}</label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <a class="btn btn-secondary" type="button" href="{{ path('admin_session_requests') }}">
+                Cancel
+            </a>
+            <button id="session-submit" type="button" class="btn btn-success" data-active="scheduled_session">
+                Submit
+            </button>
+        </div>
+    </div>
+{#    {{ form_end(form) }}#}
+{% endblock %}

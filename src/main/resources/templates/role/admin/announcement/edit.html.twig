@@ -1,0 +1,196 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+    <div class="modal" tabindex="-1" role="dialog" id="myModalEdit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: rgba(38,185,154,.88);height:45px">
+                    <h5 class="modal-title"
+                        style="color:white; font-size: large;font-family: Helvetica, Arial, sans-serif;"><b>Save</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"/>
+                        <span aria-hidden="true">&times;</span></h5>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 50px">
+                    <p>Are you sure you want to save the changes?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-success" id="saveChanges">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="myModalDelete">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #C82829;height:45px">
+                    <h5 class="modal-title"
+                        style="color:white; font-size: large;font-family: Helvetica, Arial, sans-serif;"><b>Delete</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"/>
+                        <span aria-hidden="true">&times;</span></h5>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 50px">
+                    <p>Are you sure you want to delete the Announcement?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-danger" id="deleteItem"
+                            onclick="location.href='/admin/announcement/delete/{{  adminAnnouncementResultDTO.getEditAnnouncement().id }}'">Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2> Edit Announcement ({{ adminAnnouncementResultDTO.getEditAnnouncement().subject }}) </h2>
+                        <span class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3" align="right">
+                        <button type="button" id="deleteBtn" class="btn btn-danger" data-toggle="modal"
+                                data-target="#myModalDelete" style="float: right">Delete</button>
+                    </span>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="x_content">
+
+                        <br/>
+
+                        <form class="form-horizontal form-label-left" method="post"
+                              action={{ concat('/admin/announcement/update/', adminAnnouncementResultDTO.getEditAnnouncement().id ) }}>
+
+                          <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                                              Subject
+                                                          </label>
+
+                                                           <div class="col-md-6 col-sm-6 col-xs-12">
+                                                              <input id="subject" name="subject" type="text" value = {{adminAnnouncementResultDTO.getEditAnnouncement().subject}}
+                                                                   class="form-control col-md-7 col-xs-12" required>
+                                                           </div>
+
+                                                          </div>
+
+
+                                                      <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                                              Message
+                                                          </label>
+                                                          {#{{ form_errors(form.number) }}#}
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                              <input id="message" name="message" type="text" value = "{{ adminAnnouncementResultDTO.getEditAnnouncement().message }}"
+                                                                     class="form-control col-md-7 col-xs-12" required>
+                                                          </div>
+                                                      </div>
+
+                                                      <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                                              Start Date
+                                                          </label>
+                                                          {#{{ form_errors(form.name) }}#}
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                              <input id="startdate" name="startdate" type="date" value = {{adminAnnouncementResultDTO.getEditAnnouncement().startDate}} class="form-control col-md-7 col-xs-12" required>
+                                                          </div>
+                                                      </div>
+
+                                                      <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                                              End Date
+                                                          </label>
+                                                          {#{{ form_errors(form.name) }}#}
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                              <input id="enddate" name="enddate" type="date" value = {{adminAnnouncementResultDTO.getEditAnnouncement().endDate}} class="form-control col-md-7 col-xs-12" required>
+                                                          </div>
+                                                      </div>
+
+                                                      <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+                                                              Role
+                                                          </label>
+                                                          {#{{ form_errors(form.supported) }}#}
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                              <select id="role[]" name="role[]" class="form-control col-md-7 col-xs-12" multiple="multiple">
+                                                                 {% for role in adminAnnouncementResultDTO.getRoleList() %}
+                                                                 {% set selected = '' %}
+                                                                 {% if role in adminAnnouncementResultDTO.getEditAnnouncement().roles %}
+                                                                     {% set selected = 'selected' %}
+                                                                  {% endif %}
+                                                                    <option value="{{ role.id }}" {{selected}} > {{ role.name }}</option>
+                                                                 {% endfor %}
+                                                              </select>
+
+                                                          </div>
+                                                      </div>
+
+                                                      <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+                                                              Active
+                                                          </label>
+                                                          {#{{ form_errors(form.supported) }}#}
+                                                          {% set checked = '' %}
+
+                                                              {% if adminAnnouncementResultDTO.getEditAnnouncement().active == true %}
+                                                                {% set checked = 'checked' %}
+                                                              {% endif %}
+
+                                                          <div class="col-md-6 col-sm-6 col-xs-12">
+                                                              <input id="active" name="active" type="checkbox" {{ checked }} >
+
+                                                          </div>
+                                                      </div>
+                                                        <div class="form-group">
+                                                          <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+                                                               Display Announcement before Login
+                                                          </label>
+                                                          {#{{ form_errors(form.supported) }}#}
+                                                          {% set checked = '' %}
+                                                              {% if adminAnnouncementResultDTO.getEditAnnouncement().displayAnnouncement == true %}
+                                                                  {% set checked = 'checked' %}
+                                                              {% endif %}
+                                                           <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                  <input id="displayannouncement" name="displayannouncement" type="checkbox" {{ checked }}>
+                                                           </div>
+                                                      </div>
+
+
+                                                      <div class="ln_solid"></div>
+
+                                                      <div class="form-group">
+                                                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                              <button class="btn btn-secondary" type="button"
+                                                                      onclick="location.href='/admin/announcement'">
+                                                                  Cancel
+                                                              </button>
+                                                              <button class="btn btn-success" type="submit">
+                                                                  Submit
+                                                              </button>
+                                                          </div>
+                                                      </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $('#form_submit').on('click', function (event) {
+            event.preventDefault();
+        });
+        $('#saveChanges').on('click', function () {
+            $('form').submit();
+        });
+        $('#deleteBtn').on('click', function (event) {
+            event.preventDefault();
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends '../../../shared/base.html.twig' %}
+
+{% block body %}
+    <h2>Queue</h2>
+
+    <table class="queue">
+        <thead>
+            <tr>
+                <th class="queue">Status</th>
+                <th class="queue">Table No.</th>
+                <th class="queue">Name</th>
+                <th class="queue">Course</th>
+                <th class="queue">Type</th>
+                <th class="queue">Topic</th>
+                <th class="queue">More Info</th>
+            </tr>
+        </thead>
+        <tbody id="ticket-list">
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const renderTickets = (tickets) => {
+            const list = $('#ticket-list')
+            list.empty();
+            tickets.forEach((ticket) => {
+                list.append(
+                    $('<tr>')
+                        .append($('<td>').addClass('queue').text(ticket.status).css({
+                            'background-color': (ticket.status == 'UNCLAIMED') ? 'red': 'green',
+                            'color': 'white',
+                        }))
+                        .append($('<td>').addClass('queue').text(ticket.tableNo).css({
+                            'background-color': 'hsl(' + (40 * ticket.tableNo) + ' 80 80',
+                        }))
+                        .append($('<td>').addClass('queue').text(ticket.studentName))
+                        .append($('<td>').addClass('queue').text(ticket.course))
+                        .append($('<td>').addClass('queue').text(ticket.type))
+                        .append($('<td>').addClass('queue').text(ticket.topic))
+                        .append(
+                            $('<td>').addClass('queue').append(
+                                $('<a>').addClass('view-button').addClass('btn').addClass('btn-success').text('View').attr('href',
+                                        window.location.protocol + '//' + window.location.host +
+                                        `/mentor/ticket/view/${ticket.id}`
+                                )
+                            )
+                        )
+                );
+            });
+        }
+
+        const refresh = async () => {
+            try {
+                const newData = await $.getJSON(window.location.protocol + '//' + window.location.host + '/mentor/ticket/ajax/queue')
+                renderTickets(newData);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        $(() => {
+            refresh();
+            const refreshTime = 2500;
+            setInterval(() => {
+                refresh();
+            }, refreshTime);
+        })
+    </script>
+{% endblock %}

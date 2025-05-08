@@ -1,0 +1,20 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="content_head">
+        <h2>Semester {{ semester }} ( {{ startDate }} - {{ endDate }} )</h2>
+    </div>
+    <form action="{{ path('/admin/report/mentorTimesheetWeekly/') }}" method="post">
+        <div class="form-group">
+        <label for="weekSelection">Week</label>
+        <select id="weekSelection" name="selectedWeek">
+            {% for weekNumber, weekDates in weeklyDates %}
+                <option value="{{ weekDates.start }}-{{ weekDates.end }}">
+                    Week {{ weekNumber }}: {{ weekDates.start }} - {{ weekDates.end }}
+                </option>
+            {% endfor %}
+        </select>
+        </div>
+        <button class="btn btn-success" type="submit">Submit</button>
+    </form>
+{% endblock %}

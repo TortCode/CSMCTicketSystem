@@ -1,0 +1,159 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <div class="page-title">
+                            <div class="title_left">
+                                <h3>New Users </h3>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        {% if message|length > 0 %}
+                            <br/>
+                            <div class="alert alert-danger" id="errorDiv">
+                                <span class="close" onclick="this.parentElement.style.display='none';">&times;</span>
+                                <strong> {{ message }} </strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <br/>
+                            <form class="form-horizontal form-label-left" method="post" action="{{ path(concat('/admin/users/user/create/submit'))}}">
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    NetID
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="username" name="username" type="text" class="form-control col-md-7 col-xs-12" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    First Name
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="firstname" name="firstname" type="text" class="form-control col-md-7 col-xs-12" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Last Name
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="lastname" name="lastname" type="text" class="form-control col-md-7 col-xs-12" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Card ID
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="cardid" name="cardid" type="text" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Scan Code
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="scancode" name="scancode" type="text" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                    Roles
+                                </label>
+
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    {% for rolename in form.rolesNameList %}
+                                        <label>{{ rolename }}<input type="checkbox" name="role" value="{{ form.rolesIdList[loop.index0] }}"></label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="ln_solid"></div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                    <button class="btn btn-secondary" type="button"
+                                            onclick="location.href='/admin/users/user'">
+                                        Cancel
+                                    </button>
+                                    <button id="form_submit" class="btn btn-success" type="submit"
+                                            data-toggle="modal" data-target="#myModalEdit">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" role="dialog" id="myModalEdit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: rgba(38,185,154,.88);height:45px">
+                    <h5 class="modal-title"
+                        style="color:white; font-size: large;font-family: Helvetica, Arial, sans-serif;"><b>Save</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"/>
+                        <span aria-hidden="true">&times;</span></h5>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 50px">
+                    <p>Are you sure you want to save the changes?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-success" id="saveChanges">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+
+        //Check at least one checkbox to choose
+        $('#form_submit').click(function() {
+            checked = $("input[type=checkbox]:checked").length;
+            if(!checked) {
+                var node = '<br>\n' +
+                    ' <div class="alert alert-danger" id="errorDiv">\n' +
+                    '   <span class="close" onclick="this.parentElement.style.display=\'none\';">&times;</span>\n' +
+                    '   <strong> You must check at least one checkbox. </strong>\n' +
+                    ' </div>'
+                $('.x_title').append(node);
+                return false;
+            }
+        });
+
+        $('#form_submit').on('click', function (event) {
+            event.preventDefault();
+        });
+        $('#saveChanges').on('click', function () {
+            $('form').submit();
+        });
+        $('#deleteBtn').on('click', function (event) {
+            event.preventDefault();
+        });
+    </script>
+{% endblock %}

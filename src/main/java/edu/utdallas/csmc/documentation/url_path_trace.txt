@@ -1,0 +1,11 @@
+Note: netId comes from the application.properties file. If you click on any button or link in the front-end
+      it will use this value for netid.
+
+/ - Home Page
+/student/course/section/{netId} - List all the active courses supported by CSMC and taken by the user
+/student/session/schedule/{netId} - List all the current and future Scheduled Session and Quizes for the User
+/student/session/schedule/sessions/{sessionId} - Show all the timeslots for the scheduled session that the user can register to
+/student/session/schedule/unregister/{sessionId}/{netId} - Unregister the user from the session
+/student/session/register/timeslot/{tid}/{netId} - Takes the user to the confirmatiomn page after selecting a timeslot
+/student/session/register/timeslot/confirm/{tid}/{netId} - Registers the user to the selected timeslot for the Scheduled Session.
+/student/session/history/{netId} - Lists all the grades associated with that user

@@ -1,0 +1,63 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="content_head">
+        <h2>Report - Course Visits - Date Range</h2>
+    </div>
+
+        <form id="dateForm">
+
+            <label for="start_date">Start Date:</label>
+            <input type="text" id="start_date" name="start_date" required>
+
+            <label for="end_date">End Date:</label>
+            <input type="text" id="end_date" name="end_date" required>
+
+            <button type="button" id="submitBtn">Submit</button>
+        </form>
+{% endblock %}
+{% block javascripts %}
+     {{ parent() }}
+        <script>
+            $(function() {
+                $("#start_date").datepicker();
+                $("#end_date").datepicker();
+
+                $("#submitBtn").click(function() {
+                    var startDate = $("#start_date").val();
+                    var endDate = $("#end_date").val();
+
+            // Function to convert date format
+            function convertDateFormat(dateString) {
+                var dateComponents = dateString.split("/");
+                if (dateComponents.length === 3) {
+                    var mm = dateComponents[0];
+                    var dd = dateComponents[1];
+                    var yyyy = dateComponents[2];
+                    return mm + "-" + dd + "-" + yyyy;
+                }
+                return dateString; // Return input as-is if it's not in the expected format
+            }
+
+                     var converted_start_date = convertDateFormat(startDate);
+                     var converted_end_date = convertDateFormat(endDate);
+                     var dateValue = converted_start_date + ',' + converted_end_date;
+
+
+                    $.ajax({
+                     type: 'POST',
+                     url: window.location.protocol + '//' + window.location.host + '/admin/report/ajax/courseVisit/dateRange/'+dateValue,
+                     contentType: 'application/json; charset=utf-8',
+                     data: JSON.stringify({'dateValue' : dateValue})
+                    }).done(function (data) {
+                      console.log('date value ==> ', dateValue);
+                      console.log('ajax success');
+                      window.location.href = '/admin/report/dateRange/'+dateValue;
+                   }).fail(function (data) {
+                      console.log('date value ==> ', dateValue);
+                      console.log('ajax fail');
+                  });
+                });
+            });
+        </script>
+{% endblock %}

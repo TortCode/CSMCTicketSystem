@@ -1,0 +1,27 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="content_head">
+        <h2>Report</h2>
+    </div>
+    <form action="{{ path('/admin/report/submit/') }}" method="post">
+        <div class="form-group">
+            <label for="section" class="control-label">Section</label>
+            <select id="section" name="section">
+                    <option value={{ section.id }}>{{ section.course.department.abbreviation }} {{ section.course.number }}.{{ section.number }} |
+                            {{ iFirstName }} {{ iLastName }}
+                    </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="session" class="control-label">Session</label>
+            <select id="session" name="session">
+                <option>Walk In</option>
+                {% for session in sessionsList %}
+                    <option>{{ session.topic }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-success" type="submit">Submit</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="content_head">
+        <h2>Report Main page</h2>
+    </div>
+        <form id="report_form" method="post">
+        <div class="form-group">
+            <label for="reportType" class="control-label">Report Type</label>
+            <select id="reportType" name="reportType">
+                    <option value="default">Select report type</option>
+                    <option value="ssr">Sections-Sessions-Report</option>
+                    <option value="cvpces">Course-Visits-Per-Course-Entire-Semester</option>
+                    <option value="cvpcdr">Course-Visits-Per-Course-Date-Range</option>
+                    <option value="cvacs">Course-Visits-All-Courses-Semester</option>
+                    <option value="cvw">Course-Visits-Weekly</option>
+                    <option value="mhs">Mentors-Hours-Semester</option>
+                    <option value="mhw">Mentors-Hours-Weekly</option>
+            </select>
+        </div>
+        <button class="btn btn-success" type="submit">Submit</button>
+        </form>
+{% endblock %}
+{% block javascripts %}
+     {{ parent() }}
+
+     <script>
+         const reportForm = document.getElementById("report_form");
+         const reportType = document.getElementById("reportType");
+
+                 // Add an event listener to the dropdown
+                 reportType.addEventListener("change", function () {
+                     const reportPage = this.value;
+                     // Load content based on the selected option
+                     switch (reportPage) {
+                        case "ssr":
+                             reportForm.action = '/admin/report/sectionSession';
+                             break;
+                         case "cvpces":
+                             reportForm.action = '/admin/report/courseVisitSemester';
+                             break;
+                         case "cvpcdr":
+                             reportForm.action = '/admin/report/courseVisitDateRange';
+                             break;
+                         case "cvacs":
+                             reportForm.action = '/admin/report/allCourseVisitSemester';
+                             break;
+                         case "cvw":
+                             reportForm.action = '/admin/report/courseVisitWeekly';
+                             break;
+                         case "mhs":
+                             reportForm.action = '/admin/report/mentorHoursSemester';
+                             break;
+                         case "mhw":
+                             reportForm.action = '/admin/report/mentorHoursWeekly';
+                             break;
+                         default:
+                             reportForm.action = '/admin/report';
+                     }
+                 });
+             </script>
+      {% endblock %}

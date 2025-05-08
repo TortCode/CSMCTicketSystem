@@ -1,0 +1,73 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+    {#{% include '../../../shared/component/flash_messages.html.twig' %}#}
+    {% if records >= 0 %}
+        <div class="alert alert-success" role="alert">
+          Successfully added {{ records }} students
+        </div>
+    {% elseif records == -1 %}
+       <div class="alert alert-danger" role="alert">
+             Error: expected columns "First Name", "Last Name", "Username"
+       </div>
+    {% endif %}
+    <h1>
+        {{ data.section.course.department.abbreviation }} {{ data.section.course.number }}.{{ data.section.number }}
+    </h1>
+
+    <h2>Roster</h2>
+
+    <table id="datatable" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>NetID</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student in data.roster %}
+            <tr>
+                <td>{{ student.lastName }}</td>
+                <td>{{ student.firstName }}</td>
+                <td>{{ student.username }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var exportTitle = $("h1").text().trim().replace(/ /g, '_');
+        $(function () {
+            var table = $('#datatable').DataTable({
+                paging: true,
+                ordering: true,
+                order: [[0, 'asc']],
+                searching: true,
+                buttons: [
+                    {
+                        extend: 'csv',
+                        text: 'Download',
+                        title: exportTitle,
+                        footer: true
+                    }
+                ]
+            });
+
+            table.buttons().container().appendTo( $('#datatable_wrapper .col-sm-6:eq(0)') );
+        });
+    </script>
+    <script>
+        const url = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname + window.location.search;
+        $("#form_submit").click(() => {
+            var files = $('#form_file')[0].files[0];
+            var fd = new FormData(files);
+            // fd.append('file', files);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, false);
+            xhr.send(fd);
+        });
+    </script>
+
+{% endblock %}

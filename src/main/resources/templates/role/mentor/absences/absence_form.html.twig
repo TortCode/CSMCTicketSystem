@@ -1,0 +1,96 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+
+    <form class="bt-flabels js-flabels" action="{{ path(concat('/mentor/absence/create/submit'))}}" method="post">
+        <input type="hidden" name="absenceId" value="{{ form.absenceId }}"/>
+        <div class="form-group">
+            <div class="control-label">Date</div>
+            <div class="bt-flabels__wrapper">
+                {% if form.absenceId == null %}
+                    <select class="form-control" id="date" name="date" required>
+                            {% for date in form.dateList %}
+                                <option value={{ date }}>{{ date }}</option>
+                            {% endfor %}
+                    </select>
+                {% else%}
+                   <input type="text" id="date" name="date" readonly="true" value="{{ form.dateShift }}" required/>
+                {% endif %}
+            </div>
+        </div>
+        {% if form.absenceId == null %}
+        <div class="form-group">
+            <div class="control-label">Shift</div>
+            <div class="bt-flabels__wrapper">
+                <select class="form-control" id="time" name="time" required>
+                    <option value="">-- select one -- </option>
+                </select>
+            </div>
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <div class="control-label">Reason</div>
+            <div class="bt-flabels__wrapper">
+                <input type="text" id="reason" size="100" name="reason" autocomplete="off" value="{{ form.reason }}" placeholder="Your reason..." required>
+            </div>
+        </div>
+        <button class="btn btn-success"  type="submit">
+            Submit
+        </button>
+    </form>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $(function () {
+
+                $("#date").change(function() {
+                    var date = $(this).val();
+                    console.log("date: "+date);
+                    $.ajax({
+                        type: 'POST',
+                        url: window.location.protocol + '//' + window.location.host + '/mentor/absence/shift',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: "html",
+                        data: JSON.stringify({'date' : date})
+                    }).done(function (data) {
+                        //alert("success" + data);
+                        //success message
+                        $("#time").empty().append(data);
+                    }).fail(function (data) {
+                        alert("fail" + data.responseText);
+                        //error message
+                    });
+                });
+
+
+
+                var date = document.getElementById('date').tagName;
+                console.log(date);
+                if(date == 'SELECT'){
+                    console.log('is select');
+                    var date = $("#date").val();
+                    console.log("date: "+date);
+                    $.ajax({
+                        type: 'POST',
+                        url: window.location.protocol + '//' + window.location.host + '/mentor/absence/shift',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: "html",
+                        data: JSON.stringify({'date' : date})
+                    }).done(function (data) {
+                        //alert("success" + data);
+                        //success message
+                        $("#time").empty().append(data);
+                    }).fail(function (data) {
+                        alert("fail" + data.responseText);
+                        //error message
+                    });
+                }else if(date == 'INPUT'){
+                    console.log('is input');
+                }
+
+        });
+    </script>
+
+{% endblock %}

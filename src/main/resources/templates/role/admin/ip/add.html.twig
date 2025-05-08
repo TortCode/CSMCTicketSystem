@@ -1,0 +1,92 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+
+    <div class="center_col" role="main">
+
+
+
+    <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+    <div class="x_title">
+
+        <h2>Create IP Address</h2>
+
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+
+
+        <br/>
+        <div class="x_content">
+            <br/>
+            <form class="form-horizontal form-label-left" method="post"
+                                          action="/admin/ip/create/submit">
+
+            {#{% if not form.vars.valid %}
+                <div class="alert alert-danger" id="errorDiv">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}#}
+
+            <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                    Ip Address
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                <input id="address" name="address" type="text" class="form-control col-md-7 col-xs-12" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                    Building
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                <input id="building" name="building" type="text" class="form-control col-md-7 col-xs-12">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                    Floor
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="floor" name="floor" type="text" class="form-control col-md-7 col-xs-12">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                    Class Room Number
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="number" name="number" type="text" class="form-control col-md-7 col-xs-12">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+                    Blocked
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="blocked" name="blocked" type="checkbox">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                    <button class="btn btn-secondary" type="button"
+                                                        onclick="location.href='/admin/ip'">
+                    Cancel
+                    </button>
+                    <button class="btn btn-success" type="submit">
+                        Submit
+                    </button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

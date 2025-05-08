@@ -1,0 +1,40 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="content_head">
+        <h2>Report Main page</h2>
+    </div>
+        <form id="report_semester_form" method="post">
+        <div class="form-group">
+            <label for="semester" class="control-label">Semester</label>
+                        <select id="semester" name="semester">
+                            {% for semester in semesters %}
+                                <option>{{ semester }} </option>
+                            {% endfor %}
+                        </select>
+        </div>
+        <button type="button" id="submitBtn">Submit</button>
+        </form>
+{% endblock %}
+{% block javascripts %}
+     {{ parent() }}
+        <script>
+            $(function() {
+                $("#submitBtn").click(function() {
+                    var semester = $("#semester").val();
+
+                    $.ajax({
+                     type: 'POST',
+                     url: window.location.protocol + '//' + window.location.host + '/admin/report/ajax/courseVisit/semester/'+semester,
+                     contentType: 'application/json; charset=utf-8',
+                     data: JSON.stringify({'semester' : semester})
+                    }).done(function (data) {
+                      console.log('ajax success');
+                      window.location.href = '/admin/report/semester/'+semester;
+                   }).fail(function (data) {
+                      console.log('ajax fail');
+                  });
+                });
+            });
+        </script>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends '/templates/shared/component/nav.html.twig' %}
+{% block title %}
+    <i class="fa fa-desktop"></i> <span>CSMC Admin!</span>
+{% endblock %}
+{% block links %}
+    <li>
+        <a href="{{ path('/') }}"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+    </li>
+
+    <li>
+        <a href="{{ path('/admin/announcement') }}"><i class="fa fa-bullhorn"></i> Announcements</a>
+    </li>
+
+    <li><a><i class="fa fa-edit"></i> System Set Up <span class="fa fa-chevron-down pull-right"></span></a>
+        <ul class="nav child_menu">
+            <li><a href="{{ path('/admin/ip') }}">IPs</a></li>
+            <li><a href="{{ path('/admin/room/list') }}">Rooms</a></li>
+            <li><a href="{{ path('/admin/semester') }}">Semesters</a></li>
+            <li><a href="{{ path('/admin/department') }}">Departments</a></li>
+            <li><a href="{{ path('/admin/course') }}">Courses</a></li>
+            <li><a href="{{ path('/admin/section/') }}">Sections</a></li>
+            <li><a href="{{ path('/admin/hours') }}">Operation Hours</a></li>
+            {#<li><a href="{{ path('admin_schedule_list') }}">Schedule Time</a></li>#}
+        </ul>
+    </li>
+
+    <li><a><i class="fa fa-users"></i> Users <span class="fa fa-chevron-down pull-right"></span></a>
+        <ul class="nav child_menu">
+            <li><a href="{{ path('/admin/users/user') }}">User</a></li>
+            {#<li><a href="{{ path('admin_user_group_list') }}">User Groups</a></li>#}
+            <li><a href="{{ path('/admin/user/role/') }}">Roles</a></li>
+        </ul>
+    </li>
+
+    <li><a>
+            <i class="fa fa-calendar"></i> Sessions {#<span class="badge bg-green">6</span>#}
+            <span class="fa fa-chevron-down pull-right"></span>
+        </a>
+        <ul class="nav child_menu">
+            <li><a href="{{ path('/admin/session/calendar') }}">Calendar</a></li>
+            <li><a href="{{ path('/admin/session/request/') }}">Requests</a></li>
+            {#<li><a href="{{ path('admin_holiday_list') }}">Holidays</a></li>#}
+        </ul>
+    </li>
+
+    <li>
+        <a>
+            <i class="fa fa-user"></i> Staffing <span class="fa fa-chevron-down pull-right"></span>
+        </a>
+        <ul class="nav child_menu">
+            <li><a href="{{ path('/admin/schedule/calendar') }}">Schedule</a></li>
+            <li><a href="{{ path('/admin/schedule/timesheets') }}">Timesheets</a></li>
+            <li><a href="{{ path('/admin/schedule/absences') }}">Absences</a></li>
+            <li><a href="{{ path('/admin/mentors') }}">Mentors</a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="{{ path("/admin/report") }}">
+            <i class="fa fa-book"></i> Reports
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('/admin/swipes') }}">
+            <i class="fa fa-credit-card"></i> Swipes
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('/admin/ticket/stats') }}">
+            <i class="fa fa-ticket"></i> Tickets
+        </a>
+    </li>
+{% endblock %}
+{% block top_nav %}
+    <li class="">
+        <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+           aria-expanded="false">
+{#            <img src="images/img.jpg" alt="">CSMC Admin#}
+            {{"CSMC Admin"}}
+            <span><i class=" fa fa-chevron-down"></i></span>
+        </a>
+        <ul class="dropdown-menu dropdown-usermenu pull-right">
+{#            {% if is_granted('developer') %}#}
+            {% if user_role == 'developer' %}
+                <li><a href="{{ path('dev_home') }}">Developer Panel</a></li>
+                {#<li><a href="{{ path('home', {'_switch_user':'username'}) }}">Impersonate#}
+                {#User: <input type="text"></a></li> #}{# TODO #}
+            {% endif %}
+            <li><a href="javascript:;"> Profile</a></li>
+            {#<li>#}
+            {#<a href="javascript:;">#}
+            {#<span class="badge bg-red pull-right">50%</span>#}
+            {#<span>Settings</span>#}
+            {#</a>#}
+            {#</li>#}
+            <li><a href="javascript:;">Help</a></li>
+            <li>
+                <a href="{{ path('/logout') }}"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+            </li>
+        </ul>
+    </li>
+{% endblock %}
+{% block footer %}
+    {#<a data-toggle="tooltip" data-placement="top" title="Settings">#}
+    {#<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>#}
+    {#</a>#}
+    {#<a data-toggle="tooltip" data-placement="top" title="FullScreen">#}
+    {#<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>#}
+    {#</a>#}
+    {#<a data-toggle="tooltip" data-placement="top" title="Lock">#}
+    {#<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>#}
+    {#</a>#}
+    <a data-toggle="tooltip" data-placement="top" title="Logout" href="{{ path('/logout') }}">
+        <span><i class="fa fa-power-off" aria-hidden="true"></i></span>
+    </a>
+{% endblock %}

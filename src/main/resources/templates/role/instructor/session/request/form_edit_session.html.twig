@@ -1,0 +1,111 @@
+{% extends '../../../../shared/base.html.twig' %}
+{% block body %}
+    <form name="request" method="post" action={{ path(concat('/instructor/session/request/edit/', request.id)) }} class="bt-flabels js-flabels" enctype="multipart/form-data">
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_topic" class="required">Topic</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <input type="text" id="request_topic" name="topic" required="required" class="form-control" value="{{ request.topic }}">
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_type" class="required">Type</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <select id="request_type" name="type" class="form-control">
+                    <option value="5016866d-a42a-11e8-ab44-005056005c1d" {% if request.type.name == 'review' %} selected="selected" {% endif %} >review</option>
+                    <option value="50168abe-a42a-11e8-ab44-005056005c1d" {% if request.type.name == 'rework' %} selected="selected" {% endif %} >rework</option>
+                    <option value="50168e54-a42a-11e8-ab44-005056005c1d" {% if request.type.name == 'quiz' %} selected="selected" {% endif %} >quiz</option>
+                </select>
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_studentInstructions" class="required">Student instructions</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <textarea id="request_studentInstructions" name="studentInstructions" required="required" class="form-control" >{{ request.studentInstructions }}</textarea>
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_startDate" class="required">Start date</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <input type="date" id="request_startDate" name="startDate" required="required" class="form-control" value="{{ request.startDate|date("yyyy-MM-dd") }}">
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_endDate" class="required">End date</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <input type="date" id="request_endDate" name="endDate" required="required" class="form-control" value="{{ request.endDate|date("yyyy-MM-dd") }}">
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_sections" class="required">Sections</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <select id="request_sections" name="sections" required="required" class="form-control" multiple="multiple">
+                    {% for section in sections %}
+                        {% if section in request.sections %}
+                            <option value="{{section.id}}" selected="selected">{{ section.course.department.abbreviation }} {{ section.course.number }}.{{ section.number }}</option>
+                        {% else %}
+                            <option value={{section.id}}>{{ section.course.department.abbreviation }} {{ section.course.number }}.{{ section.number }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="request_files">Files</label>
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <input type="file" id="request_files" name="files" multiple="multiple" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <a class="btn btn-secondary" type="button" href="/instructor/session/request">
+                    Cancel
+                </a>
+                <button type="submit" id="request_submit" name="request[submit]" class="btn btn-success">Submit</button>
+            </div>
+        </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Sort section list
+        $(function() {
+          // choose target dropdown
+          var select = $('#request_sections');
+          select.html(select.find('option').sort(function(x, y) {
+            // to change to descending order switch "<" for ">"
+            return $(x).text() > $(y).text() ? 1 : -1;
+          }));
+
+          // select default item after sorting (first item)
+          // $('select').get(0).selectedIndex = 0;
+        });
+    </script>
+
+{% endblock %}

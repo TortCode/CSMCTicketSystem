@@ -1,0 +1,36 @@
+<section class="py-5">
+<div class="container px-5">
+    <h2 class="fw-bolder mb-4">Announcements</h2>
+
+    {% if length(announcements) != 0 %}
+    {% for announcement in announcements %}
+    <div class="card border-0 shadow rounded-3 overflow-hidden mb-4">
+        <div class="card-body p-0">
+            <div class="row gx-0">
+                <div class="px-4 py-2 pt-3">
+                    <div class="badge bg-primary rounded-pill mb-2">New</div>
+                    <div class="h6 fw-bolder">{{ announcement.postDate|date('MM/dd/yyyy') }}</div>
+                    <p>{{ announcement.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+    {% else %}
+
+    <div class="card border-0 shadow rounded-3 overflow-hidden mb-4">
+        <div class="card-body p-0">
+            <div class="row gx-0">
+                <div class="px-4 py-2 pt-3">
+                    <div class="badge bg-primary rounded-pill mb-2">New</div>
+                    <div class="h6 fw-bolder">{{ "now"|date('MM/dd/yyyy') }}</div>
+                    <p>No recent announcements</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+</section>

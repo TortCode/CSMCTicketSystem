@@ -1,0 +1,16 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+  <h2>Ticket Form</h2>
+  {% if ticket.mentorName != null %}
+  <p>Mentor: {{ ticket.mentorName }}</p>
+  {% endif %}
+  <p>Name: {{ ticket.studentName }}</p>
+  <p>Course & Topic: {{ ticket.course }}: {{ ticket.topic|escape }}</p>
+  <p>Additional Info: {{ ticket.info|escape }}</p>
+  <a href="{{ path('/student/ticket/withdraw/') }}">
+    <button id="withdraw" class="btn btn-dark">Withdraw</button>
+  </a>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

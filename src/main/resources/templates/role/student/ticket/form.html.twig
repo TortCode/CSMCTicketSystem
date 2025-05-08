@@ -1,0 +1,88 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+  <h1>Ticket Form</h1>
+  <form action="{{path('/student/ticket/submit')}}" method="GET">
+    <label for="tableNo">Table No:</label>
+    <br>
+    <input type="number" id="tableNo" name="tableNo" required>
+    <br><br>
+
+    <label for="course">Course:</label>
+    <br>
+    <select id="course" name="course" required>
+    {% for course in courses %}
+      <option value="{{ course.courseNumber }}">{{ course.courseNumber ~ ": " ~ course.courseName }}</option>
+    {% endfor %}
+    </select>
+    <br><br>
+
+
+    <label for="topic">Topic:</label>
+    <br>
+    <input type="text" id="topic" name="topic" required>
+    <br><br>
+
+
+    <label for="ticketType">Ticket Type:</label>
+    <br>
+    <select id="ticketType" name="ticketType" required>
+      {% for activity in activities %}
+        <option value="{{ activity.name }}">{{ activity.name }}</option>
+      {% endfor %}
+    </select>
+    <br><br>
+
+    <!-- Additional info input -->
+    <label for="additionalInfo">Additional Information:</label>
+    <br>
+    <textarea id="additionalInfo" name="additionalInfo" rows="4" cols="50"></textarea>
+    <br><br>
+
+    <!-- Submit button -->
+    <input type="submit" value="Submit" class="btn btn-success">
+  </form>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+  <script>
+    const autofillForm = () => {
+      const data = {
+      {% if autofill != null %}
+        {% if autofill.tableNo != null %}
+        tableNo: {{ autofill.tableNo }},
+        {% endif %}
+        {% if autofill.course != null %}
+        course: "{{ autofill.course }}",
+        {% endif %}
+        {% if autofill.topic != null %}
+        topic: "{{ autofill.topic }}",
+        {% endif %}
+        {% if autofill.type != null %}
+        type: "{{ autofill.type }}",
+        {% endif %}
+        {% if autofill.info != null %}
+        info: "{{ autofill.info }}",
+        {% endif %}
+      {% endif %}
+      }
+      if (data.tableNo != null) {
+        $('#tableNo').val(data.tableNo);
+      }
+      if (data.course != null) {
+        $('#course').val(data.course);
+      }
+      if (data.topic != null) {
+        $('#topic').val(data.topic);
+      }
+      if (data.type != null) {
+        $('#ticketType').val(data.type);
+      }
+      if (data.info != null) {
+        $('#additionalInfo').val(data.info);
+      }
+    }
+
+    $(autofillForm);
+  </script>
+{% endblock %}

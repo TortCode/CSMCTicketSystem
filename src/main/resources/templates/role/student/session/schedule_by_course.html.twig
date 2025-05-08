@@ -1,0 +1,79 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+
+        <table id="sessions" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>SectionNumber</th>
+                <th>CourseName</th>
+                <th>Topic</th>
+                <th>Type</th>
+                <th>Room</th>
+                <th>Description</th>
+                <th>Date and Time</th>
+                <th>Register</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for course in courses %}
+                <tr>
+                    <td>{{ course.sectionNumber }}</td>
+                    <td>{{ course.courseName }}</td>
+                    <td>{{ course.topic }}</td>
+                    <td>{{ course.type }}</td>
+                    <td>{{ course.room }}</td>
+                    <td>{{ course.description }}</td>
+                    {% if course.startDate is not null%}
+                        <td>{{ course.startDate|date('MM-dd-yyyy hh:mm a')}} - {{ course.endDate|date('MM-dd-yyyy hh:mm a')}}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>
+                        {% if course.type != 'Quiz' %}
+                            {% if course.registered %}
+                                {% if course.attended %}
+                                    <button class="btn btn-danger" style="width: 110px" title = " Already attended this Session!" disabled >
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                        Unregister
+                                    </button>
+                                {% else %}
+                                    <a class="btn btn-danger"  style="width: 110px" href="{{ path(concat('/student/session/schedule/unregister/', course.sectionId) )}}" >
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                        Unregister
+                                    </a>
+                                {% endif %}
+                            {% else %}
+{#                                style="width: 110px"#}
+                                <a class="btn btn-success" style="width: 110px" href="{{ path('/student/session/schedule/sessions/' ~ course.sectionId) }}" >
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    Register
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{#        {% else %}#}
+{#          <br/>#}
+{#          <div class="alert alert-danger" id="errorDiv">#}
+{#              <span class="close" onclick="this.parentElement.style.display='none';">&times;</span>#}
+{#              <strong> You are not currently enrolled in any courses. If you believe this is an#}
+{#            error please contact your instructor(s). </strong>#}
+{#          </div>#}
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            $('#sessions').DataTable({
+                paging: false,
+                ordering: true,
+                order: [[3, 'desc']],
+                searching: true
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,16 @@
+<h4>Announcements</h4>
+<h5>
+<div class="alert alert-danger" role="alert">
+<dl class="dl-horizontal">
+    {% if length(announcements) != 0 %}
+        {% for announcement in announcements %}
+            <dt style="text-align: left;">{{ announcement.postDate|date('MM/dd/yyyy') }}</dt>
+            <dd style="text-align: left;">{{ announcement.message }}</dd>
+        {% endfor %}
+    {% else %}
+        <dt style="text-align: left;">{{ "now"|date('MM/dd/yyyy') }}</dt>
+        <dd style="text-align: left;">No recent announcements</dd>
+    {% endif %}
+</dl>
+</div>
+</h5>

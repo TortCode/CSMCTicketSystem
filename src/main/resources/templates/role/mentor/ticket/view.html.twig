@@ -1,0 +1,110 @@
+{% extends "../../../shared/base.html.twig" %}
+
+{% block body %}
+
+    <h2>Ticket Information</h2>
+
+    <div class="ticket-details">
+        <div class="ticket-row">
+            <div class="ticket-label">Status:</div>
+            <div class="ticket-value">{{ ticket.status }}</div>
+        </div>
+        <div class="ticket-row">
+            <div class="ticket-label">Table:</div>
+            <div class="ticket-value">{{ ticket.tableNo }}</div>
+        </div>
+        <div class="ticket-row">
+            <div class="ticket-label">Student Name:</div>
+            <div class="ticket-value">{{ ticket.studentName }}</div>
+        </div>
+        <div class="ticket-row">
+            <div class="ticket-label">Course & Topic:</div>
+            <div class="ticket-value">{{ ticket.course ~ ', ' ~ ticket.topic|escape }}</div>
+        </div>
+        <div class="ticket-row">
+            <div class="ticket-label">Additional Info:</div>
+            <div class="ticket-value">{{ ticket.info|escape }}</div>
+        </div>
+        <div class="ticket-row">
+            <div class="ticket-label">Assigned Mentor:</div>
+            <div class="ticket-value">
+                {% if ticket.status == 'CLAIMED' %}
+                    {{ ticket.mentorName }}
+                {% else %}
+                    <select id="mentorDropdown" name="mentor">
+                    {% for mentor in mentors %}
+                        <option value="{{ mentor.id }}">{{ mentor.getName().trim() }}</option>
+                    {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="button-group">
+            <a href="{{ path('/mentor/ticket/queue') }}" class="back-button btn btn-red">Back</a>
+            {% if ticket.status == 'CLAIMED' %}
+                <a href="{{ path(concat('/mentor/ticket/unclaim/', ticket.id)) }}">
+                    <button id="unclaimButton" class="claim-button btn btn-success">Unclaim</button>
+                </a>
+                <a href="{{ path(concat('/mentor/ticket/finish/', ticket.id)) }}">
+                    <button id="finishButton" class="finish-button btn btn-success" >Finish</button>
+                </a>
+            {% elseif ticket.status == 'UNCLAIMED' %}
+                <a id="claim-anchor" href="{{ path(concat('/mentor/ticket/claim/', ticket.id)) }}">
+                    <button id="claimButton" class="claim-button btn btn-success">Claim</button>
+                </a>
+            {% endif %}
+            <a id="remove-anchor" href="{{ path(concat('/mentor/ticket/kill/', ticket.id)) }}">
+                <button id="removeButton" class="remove-button btn btn-red">Remove</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleClaim(claimed) {
+            const claimBtn = document.getElementById('claimButton');
+            const unclaimBtn = document.getElementById('unclaimButton');
+            const finishBtn = document.getElementById('finishButton');
+
+            if (claimed) {
+                claimBtn.style.display = 'none'; // Hide claim button
+                unclaimBtn.style.display = 'inline-block'; // Show unclaim button
+                finishBtn.style.display = 'inline-block'; // Show finish button
+            } else {
+                claimBtn.style.display = 'inline-block'; // Show claim button
+                unclaimBtn.style.display = 'none'; // Hide unclaim button
+                finishBtn.style.display = 'none'; // Hide finish button
+            }
+        }
+
+        function finishTicket() {
+            alert("Ticket finished!");
+            // Optionally, you can add logic to mark the ticket as finished or perform an action
+        }
+    </script>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(() => {
+            const claimAnchor = $('#claim-anchor');
+            claimAnchor.on('click', (e) => {
+                e.preventDefault();
+                const mentorId = $('#mentorDropdown').val();
+                console.log(mentorId)
+                const newUrl = claimAnchor.attr('href') + '/' + mentorId;
+                location.assign(newUrl);
+            });
+
+            const removeAnchor = $('#remove-anchor')
+            removeAnchor.on('click', (e) => {
+                e.preventDefault();
+                if (window.confirm("Are you sure you want to remove this ticket?")) {
+                    location.assign(removeAnchor.attr("href"))
+                }
+            })
+        })
+    </script>
+{% endblock %}

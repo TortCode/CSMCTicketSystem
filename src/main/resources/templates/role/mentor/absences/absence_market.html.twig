@@ -1,0 +1,103 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+{#    {{ include('shared/component/flash_messages.html.twig') }}#}
+    <h2>My Absences
+        <a class="pull-right btn btn-success" href="{{ path('/mentor/absence/create') }}">
+            Submit Absence
+        </a>
+    </h2>
+    <table id="my" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Shift</th>
+            <th>Reason</th>
+            <th>Substitute</th>
+            <th>Update</th>
+            <th>Cancel</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for absence in absences.myAbsenceDetails %}
+        <tr id="{{ absence.absenceId }}">
+            <td>{{ absence.shiftDate|date('MM-dd-yyyy') }}</td>
+            <td>{{ absence.startTime|date('hh:mm a') }}</td>
+            <td>{{ absence.reason }}</td>
+            <td>{{ absence.substitute }}</td>
+            <td>
+                {% if absence.substituteFlag == false and absence.futureDateFlag %}
+                    <a class="btn btn-success" href="{{ path(concat('/mentor/absence/update/', absence.absenceId )) }}">
+                        Update
+                    </a>
+                {% endif %}
+            </td>
+            <td>
+                {% if absence.substituteFlag == false and absence.futureFlag %}
+                    <a class="btn btn-danger" href="{{ path(concat('/mentor/absence/cancel/', absence.absenceId )) }}" >
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Cancel
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h2>Absences</h2>
+    <div class="alert alert-danger">Reminder: Make sure you do NOT work more than 19 hours in a week!</div>
+    <table id="other" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Mentor</th>
+            <th>Date</th>
+            <th>Shift</th>
+            <th>Session</th>
+            <th>Substitute Mentor</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for absence in absences.otherAbsenceDetails %}
+        <tr>
+            <td>{{ absence.mentor }}</td>
+            <td>{{ absence.shiftDate|date('MM-dd-yyyy') }}</td>
+            <td>{{ absence.startTime|date('hh:mm a') }}</td>
+            <td>{{ absence.topic }}</td>
+            <td id="{{ absence.id }}">
+                {% if absence.substitute is not null %}
+                    {% if absence.substitute == absences.current_mentor %}
+                        <a class="btn btn-success" href="{{ path(concat('/mentor/absence/relieveClaim/', absence.id )) }}">
+                            Relieve claim
+                        </a>
+                    {% else %}
+                    {{ absence.substitute }}
+                    {% endif %}
+                {% else %}
+                    <a class="btn btn-success" href="{{ path(concat('/mentor/absence/claim/', absence.id )) }}">
+                        Claim
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="application/javascript">
+        $(function () {
+            $('#my').DataTable({
+                'paging': false,
+                'ordering': true,
+                'searching': true
+            });
+
+            $('#other').DataTable({
+                'paging': false,
+                'ordering': true,
+                'searching': true
+            });
+
+        });
+    </script>
+{% endblock %}

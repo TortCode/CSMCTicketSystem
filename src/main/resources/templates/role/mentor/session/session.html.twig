@@ -1,0 +1,50 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+	<h2 class="content_title">{{ session.topic }}</h2>
+	<dl class="dl-horizontal">
+		<dt>Description</dt>
+		<dd>{{ session.description }}</dd>
+		<dt>Student Instructions</dt>
+		<dd>{{ session.studentInstructions }}</dd>
+		<dt>Mentor Instructions</dt>
+		<dd>{{ session.mentorInstructions }}</dd>
+		<dt>Graded</dt>
+		<dd>
+			{% if session.graded %}
+				yes
+			{% else %}
+				no
+			{% endif %}
+		</dd>
+		{% if session.graded %}
+			<dt>Grading Scheme</dt>
+			<dd>
+				{% if session.numericGrade %}
+					numeric
+				{% else %}
+					pass/fail
+				{% endif %}
+			</dd>
+		{% endif %}
+		<dt>Materials</dt>
+		{% if length(session.files) != 0 %}
+			{% for file in session.files %}
+				{% if not (loop.first) %}
+					<dt></dt>
+				{% endif %}
+				<dd>
+					<a href="{{ path(concat('/mentor/session/file/download/', file.fileId, '/quiz/', sessionId)) }}">{{ file.name }}</a>
+
+				</dd>
+			{% endfor %}
+		{% else %}
+			<dd></dd>
+		{% endif %}
+		<dt>Dates</dt>
+		<dd>
+			{{ session.startDate|date('MM/dd/YY') }}
+			-
+			{{ session.endDate|date('MM/dd/yy') }}
+		</dd>
+	</dl>
+{% endblock %}

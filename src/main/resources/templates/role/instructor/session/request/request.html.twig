@@ -1,0 +1,66 @@
+{% extends '../../../../shared/base.html.twig' %}
+{% block body %}
+    <dl class="dl-horizontal">
+        <dt>Requester</dt>
+        <dd>{{ request.user.firstName }} {{ request.user.lastName }}</dd>
+        <dt>Topic</dt>
+        <dd>{{ request.topic }}</dd>
+        <dt>Type</dt>
+        <dd>{{ request.type.name }}</dd>
+        <dt>Time Requested</dt>
+        <dd class="timeSlots">{{ request.created}}</dd>
+        <dt>Time Last Updated</dt>
+        <dd class="timeSlots">{{ request.updated}}</dd>
+        <dt>Dates Requested</dt>
+        <dd class="sessionDate">{{ request.startDate}} ~ {{ request.endDate }}</dd>
+        <dt>Course</dt>
+        <dd>{{ request.sections[0].course.department.abbreviation }} {{ request.sections[0].course.number }}</dd>
+        <dt>Section(s)</dt>
+        <dd>
+            {% set count = request.sections|length %}
+            {% for section in request.sections %}
+                {{ section.number }}
+                {% if count > 1 %}
+                    {{ ", " }}
+                    {% set count = count - 1 %}
+                {% endif %}
+            {% endfor %}
+        </dd>
+        <dt>Student Instructions</dt>
+        <dd>{{ request.studentInstructions }}</dd>
+        <dt>Files</dt>
+        <dd>
+            {% for file in request.files %}
+                <a href="{{ path(concat(concat('/instructor/session/request/view/', request.id), concat('/download/', file.id))) }}">{{ file.name }}</a><br>
+            {% endfor %}
+        </dd>
+    </dl>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(".timeSlots").each(function(){
+            var timeSlot = moment(new Date($(this).html().trim()));
+            if(timeSlot.isValid()){
+                var formattedDate = timeSlot.format("MM/DD/YY hh:mm A");
+                $(this).html(formattedDate);
+            } else {
+                $(this).html("N/A");
+            }
+        });
+
+        $(".sessionDate").each(function(){
+            var timeSlot = $(this).html().trim();
+            console.log(timeSlot);
+            var start = moment(new Date(timeSlot.substring(0, timeSlot.indexOf("~")).trim()));
+            var end = moment(new Date(timeSlot.substring(timeSlot.indexOf("~") + 1).trim()));
+            if(start.isValid() && end.isValid()){
+                var formattedStart = start.format("MM/DD/YY");
+                var formattedEnd = end.format("MM/DD/YY");
+                $(this).html(formattedStart + " - " + formattedEnd);
+            } else {
+                $(this).html("N/A");
+            }
+        });
+    </script>
+{% endblock %}

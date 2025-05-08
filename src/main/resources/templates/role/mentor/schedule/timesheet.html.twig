@@ -1,0 +1,72 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        th, td {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    {% set currDate = mentorTimeSheetDTO.getWeekStartDate() %}
+    <div class="content_head">
+        <h2 class="content_title">Times for Week
+            of {{ mentorTimeSheetDTO.getLocalDateAsDate(currDate)|date('MM-dd-yyyy') }}</h2>
+        <div class="content_options">
+            {% set prev = currDate %}
+            {% set prev = mentorTimeSheetDTO.getPrevWeekStartDate(currDate) %}
+            {% set next = currDate %}
+            {% set next = mentorTimeSheetDTO.getNextWeekStartDate(currDate) %}
+            {% set strPrev = mentorTimeSheetDTO.getStringDate(prev.toString()) %}
+            <a href="{{ path(concat('/mentor/timesheet/',  strPrev)) }}"
+               class="pull-left btn btn-success">
+                Previous
+            </a>
+            {% set strNext = mentorTimeSheetDTO.getStringDate(next.toString()) %}
+            <a href="{{ path(concat('/mentor/timesheet/',  strNext)) }}"
+               class="pull-right btn btn-success">
+                Next
+            </a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Day</th>
+            <th>Date</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set currWeekDay = currDate %}
+        {% for i in [0,1,2,3,4,5,6] %}
+            <div class="content_head">
+                {% set flag = 0 %}
+                <tr>
+                    <td rowSpan= {{ mentorTimeSheetDTO.getTimesheet().get(mentorTimeSheetDTO.getLocalDateAsDate(currWeekDay)).keySet().size() }}>{{ mentorTimeSheetDTO.getDayOfWeek(currWeekDay) }}</td>
+                    <td rowSpan= {{ mentorTimeSheetDTO.getTimesheet().get(mentorTimeSheetDTO.getLocalDateAsDate(currWeekDay)).keySet().size() }}>{{ mentorTimeSheetDTO.getLocalDateAsDate(currWeekDay)|date('MM-dd-yyyy') }}</td>
+            </div>
+            {% for time in mentorTimeSheetDTO.getTimesheet().get(mentorTimeSheetDTO.getLocalDateAsDate(currWeekDay)).keySet() %}
+                {% if (time is not null) %}
+                    {% if flag == 0 %}
+                        <td>{{ mentorTimeSheetDTO.getTimefromDate(time) }}</td>
+                        <td>{{ mentorTimeSheetDTO.getTimefromDate(mentorTimeSheetDTO.getTimesheet().get(mentorTimeSheetDTO.getLocalDateAsDate(currWeekDay)).get(time)) }}</td>
+                        {% set flag = 1 %}
+                    {% else %}
+                        <tr>
+                            <td>{{ mentorTimeSheetDTO.getTimefromDate(time) }}</td>
+                            <td>{{ mentorTimeSheetDTO.getTimefromDate(mentorTimeSheetDTO.getTimesheet().get(mentorTimeSheetDTO.getLocalDateAsDate(currWeekDay)).get(time)) }}</td>
+                        </tr>
+                        {% set flag = flag + 1 %}
+                    {% endif %}
+                {% else %}
+                    <td colspan="2">You have no times</td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+            {% set currWeekDay = mentorTimeSheetDTO.getnextDate(currWeekDay) %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

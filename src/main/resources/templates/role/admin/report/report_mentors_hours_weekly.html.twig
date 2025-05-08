@@ -1,0 +1,86 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="chart-container" style="position: relative; width: 100%; height: 100%;">
+        <h3> Weekly Report - Mentors Hours - ( {{ startDate }} - {{ endDate }} )</h3>
+        <canvas id="barGraph"></canvas>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script>
+        $(function () {
+            var ctx = document.getElementById('barGraph').getContext('2d');
+            var data = {
+                    labels: [
+                        {% for key, value in mentorWeeklyHours %}
+                        "{{ key }}",
+                        {% endfor %}
+                    ],
+                    datasets: [{
+                        label: "# Mentor Weekly Hours",
+                        data: [
+                            {% for key, value in mentorWeeklyHours %}
+                            {{ value }},
+                            {% endfor %}
+                        ],
+                        backgroundColor: randomColor(),
+                        borderColor: randomColor(),
+                        borderWidth: 1
+                    }]
+                };
+
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                           ticks: {
+                                stepSize: 5,
+                                callback: function(value) {
+                                    return value;
+                                }
+                            }
+                        }
+                    },
+                     plugins: {
+                         legend: {
+                             display: true,
+                             position: 'top'
+                         }
+                     },
+                     animation: {
+                         onComplete: function () {
+                             var chartInstance = this.chart;
+                             var ctx = chartInstance.ctx;
+
+                             ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+                             ctx.fillStyle = 'black';
+                             ctx.textAlign = 'center';
+                             ctx.textBaseline = 'bottom';
+
+                             this.data.datasets.forEach(function (dataset, i) {
+                                 var meta = chartInstance.controller.getDatasetMeta(i);
+                                 meta.data.forEach(function (bar, index) {
+                                     var data = dataset.data[index];
+                                     ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                                 });
+                             });
+                         }
+                     }
+                   }
+                });
+                 // Function to generate random colors
+                    function randomColor() {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256);
+                        return `rgba(${r},${g},${b},1)`;
+                    }
+            });
+        </script>
+{% endblock %}

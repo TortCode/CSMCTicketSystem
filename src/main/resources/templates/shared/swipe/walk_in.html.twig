@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+{#    TODO#}
+{#    <link rel="icon" type="image/png" href="{{ asset('build/images/favicon.png') }}">#}
+{#    <link rel="icon" type="image/png" href="../assets/images/favicon.png">#}
+
+    <title>Welcome!</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{#    TODO#}
+{#    <link rel="stylesheet" type="text/css" href="{{ asset('build/css/global.css') }}"/>#}
+</head>
+{#TODO#}
+{#<body style="background: #FFFFFF url({{ asset('build/images/swipe-background.png') }}) no-repeat right top;">#}
+<body style="background: #FFFFFF no-repeat right top;">
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+{#                            TODO#}
+{#                            <img src="{{ asset("build/images/logo-csmc.png") }}">#}
+                        </div>
+                    </div>
+                    <div style="height: 15vh"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3"></div>
+                <div class="col-xs-6">
+                    <div class="row">
+                        <div class="col-xs-3"></div>
+                        <div class="col-xs-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h2>Welcome! Sign In Here</h2>
+                                </div>
+                                <div class="panel-body">
+                                    <form name="swipe_form" class="form-horizontal" class="form-label-left" method="post" onsubmit="swipeWalkIn()">
+{#                                       {{ form_errors(swipe_form) }}#}       {# TODO#}
+                                        <div id="success" class="alert alert-success" style="display: none;"></div>
+                                        <div class="form-group">
+    {#                                        {{ form_errors(swipe_form.scancode) }}#}            {#  TODO#}
+                                            <div>
+                                                <div id="loader" class="text-center" style="display: none;">
+    {#                                                <img src="{{ asset('build/images/ajax-loader.gif') }}">#}    {#TODO#}
+                                                </div>
+                                                <input type="password" id="swipeCardId" autofocus placeholder="Please scan your Comet Card" class="form-control" name="swipe_form.scancode" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3"></div>
+                    </div>
+                    <div id="ticket-instructions">
+                        We are testing a new ticketing system this week. Do not pick up a physical flag. <br/>
+                        Here's a quick tutorial on the new ticketing system at the CSMC! <br/>
+                        1. The course field will be initially the same subject you selected in the entry survey when you swiped in. Feel free to select anything else from the drop down if you pivot. <br/>
+                        2. The topic field is for the actual topic you need help with. <br/>
+                        3. Ticket type is the kind of help you need with the above topic, which will help the mentor approach the problem better. Two new ticket types are here: conceptual is for when you need help understanding the topic, and debugging is for when you know what you need to do but come across errors you don't know how to fix. <br/>
+                        4. Additional info is an optional field where you can tell your mentor anything more specific about your issue. <br/>
+                        5. Submit the ticket, and a mentor will be on their way shortly to help you. If you want to withdraw a ticket, you can click the Withdraw button, otherwise the mentor will close the ticket for you. <br/>
+                    </div>
+                    <div class="col-xs-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="entry-modal" tabindex="-1" role="dialog" aria-labelledby="entry-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="entry-modal-label">Entry Survey</h4>
+            </div>
+            <div class="modal-body">
+                <div id="entry-error" class="alert alert-danger" style="display: none;"></div>
+                <div id="entry-loader" class="text-center" style="display: none;">
+{#                    <img src="{{ asset('build/images/ajax-loader.gif') }}">    TODO#}
+                </div>
+                <form name="entry_form" class="bt-flabels" class="js-flabels" method="post" id="entry_form">
+                   <div class="form-group">
+                        <div class="control-label"> Course
+                        </div>
+{#                        {{ form_errors(entry_form.course) }}   TODO#}
+                        <div class="bt-flabels__wrapper">
+                            <select id="course" name="course" class="form-control">
+                                <option value="" selected disabled>Please Select</option>
+                                <optgroup label="Supported" id="supported"></optgroup>
+                                <optgroup label="Unsupported" id="unsupported"></optgroup>
+                            </select>
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label">
+                            Activity
+                        </div>
+{#                        {{ form_errors(entry_form.activity) }}    TODO#}
+                        <div class="bt-flabels__wrapper">
+                            <select id="activity" name="activity" class="form-control">
+                                <option value="" selected disabled>Please Select</option>
+                            </select>
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                                            <div class="control-label">
+                                                Topic / Concept(or)Activity
+                                            </div>
+                    {#                        {{ form_errors(entry_form.topic) }}    TODO#}
+                                            <div class="bt-flabels__wrapper">
+                                                <input type="text" class="form-control" name="topic" id="topic"/>
+                                                <span class="bt-flabels__error-desc">Required</span>
+                                            </div>
+                                        </div>
+                    <div class="form-group">
+                        <div class="control-label" id="quizlabel" style="display:none;">
+                            Quiz
+                        </div>
+{#                        {{ form_errors(entry_form.quiz) }}    TODO#}
+                        <div class="bt-flabels__wrapper">
+                            <select id="quiz" name="quiz" class="form-control" style="display:none;">
+                                <option value="" selected disabled>Please Select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="user" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="entry-submit" type="submit" class="btn btn-success" onclick="entrySurvey()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exit-modal" tabindex="-1" role="dialog" aria-labelledby="exit-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exit-modal-label">Exit Survey</h4>
+            </div>
+            <div class="modal-body">
+                <div id="exit-error" class="alert alert-danger" style="display: none;"></div>
+                <div id="exit-loader" class="text-center" style="display: none;">
+{#                    <img src="{{ asset('build/images/ajax-loader.gif') }}">#}
+                </div>
+                <form name="exit_form" class="bt-flabels" class="js-flabels" method="post" id="exit_form">
+                    <div class="form-group">
+                        <div class="control-label">
+                            Mentors
+                        </div>
+{#                        {{ form_errors(exit_form.mentors) }}#}
+                        <div class="bt-flabels__wrapper">
+                                <select id="mentors" name="mentors" class="form-control" multiple>
+                                    <option value="" selected disabled>Dont Know</option>
+                                </select>
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label">
+                            Feedback
+                        </div>
+{#                        {{ form_errors(exit_form.feedback) }}#}
+                        <div class="bt-flabels__wrapper">
+                            <textarea class="form-control" id="feedback" name="feedback" placeholder="Feedback"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="user" />
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="attendance" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="exit-submit" type="submit" class="btn btn-success" onclick="exitSurvey()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="register-modal" tabindex="-1" role="dialog"
+     aria-labelledby="register-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="register-modal-label">Register Comet Card</h4>
+            </div>
+            <div class="modal-body">
+                <div id="register-error" class="alert alert-danger" style="display: none;"></div>
+                <div id="register-warning" class="alert alert-warning">
+                    <strong>Card not registered!</strong>
+                    Please enter your NetID and password to register this card.
+                </div>
+                <div id="register-loader" class="text-center" style="display: none;">
+{#                    <img src="{{ asset('build/images/ajax-loader.gif') }}">#}
+                </div>
+                <form name="register_form" id="register_form" class="bt-flabels" class="js-flabels">
+                    <div class="form-group">
+                        <div class="control-label">
+                            UserName
+                        </div>
+{#                        {{ form_errors(register_form.username) }}#}
+                        <div class="bt-flabels__wrapper">
+                            <input type="text" id="username" class="form-control" />
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label">
+                            Password
+                        </div>
+{#                        {{ form_errors(register_form.password) }}#}
+                        <div class="bt-flabels__wrapper">
+                            <input type="password" id="password" class="form-control" />
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="swipe" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="register-submit" type="submit" class="btn btn-success" onclick="registerUser()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="error-modal" tabindex="-1" role="dialog"
+     aria-labelledby="error-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="error-modal-label">Error</h4>
+            </div>
+            <div class="modal-body">
+                <div id="error-message" class="alert alert-danger" role="alert">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.8.1/parsley.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.1/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.16/features/pageResize/dataTables.pageResize.min.js"></script>
+<script>
+    $(function () {
+
+        // floating labels
+        var floatingLabel;
+
+        floatingLabel = function (onload) {
+            var $input;
+            $input = $(this);
+            if (onload) {
+                $.each($('.bt-flabels__wrapper input'), function (index, value) {
+                    var $current_input;
+                    $current_input = $(value);
+                    if ($current_input.val()) {
+                        $current_input.closest('.bt-flabels__wrapper').addClass('bt-flabel__float');
+                    }
+                });
+            }
+
+            setTimeout((function () {
+                if ($input.val()) {
+
+                } else {
+                    $input.closest('.bt-flabels__wrapper').removeClass('bt-flabel__float');
+                }
+            }), 1);
+        };
+
+        $('.bt-flabels__wrapper input').keydown(floatingLabel);
+        $('.bt-flabels__wrapper input').change(floatingLabel);
+
+        window.addEventListener('load', floatingLabel(true), false);
+        var error = function () {
+            $.each(this.fields, function (key, field) {
+                if (field.validationResult !== true) {
+                    field.$element.closest('.bt-flabels__wrapper').addClass('bt-flabels__error');
+                }
+            });
+        };
+
+        var validated = function () {
+            if (this.validationResult === true) {
+                this.$element.closest('.bt-flabels__wrapper').removeClass('bt-flabels__error');
+            } else {
+                this.$element.closest('.bt-flabels__wrapper').addClass('bt-flabels__error');
+            }
+        };
+
+        // no_card_form.parsley().on('form:error', error);
+        // no_card_form.parsley().on('field:validated', validated);
+
+        register_form.parsley().on('form:error', error);
+        register_form.parsley().on('field:validated', validated);
+        // end floating labels
+    });
+
+    //swipe walkin
+    function swipeWalkIn() {
+        event.preventDefault();
+        var scancode = document.getElementById("swipeCardId").value;
+        var temp = document.getElementById("swipeCardId");
+        var input = $('#swipeCardId');
+        var success = $('#success');
+        $.ajax({
+            type: 'POST',
+            url: window.location.protocol + '//' + window.location.host + '/mentor/swipe/ajax/walk_in',
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            data: JSON.stringify({'scancode' : scancode}),
+            beforeSend: function () {
+                input.hide();
+                // loader.show();
+            }
+        }).always(function () {
+            temp.value = "";
+            input.show();
+            temp.focus();
+            // loader.hide();
+        }).done(function (data,textStatus, jqXHR) {
+            switch (jqXHR.responseJSON.successMessage) {
+                case 'entrance':
+                    setActivity(jqXHR.responseJSON.activity);
+                    setCourse(jqXHR.responseJSON.supportedCourses, jqXHR.responseJSON.unsupportedCourses);
+                    setQuiz(jqXHR.responseJSON.quizzes);
+                    $('#entry-modalio').modal('show');
+                    $('#user').val(jqXHR.responseJSON.userId);
+                    break;
+                case 'exit':
+                    setMentors(jqXHR.responseJSON.mentors);
+/*                     $('#exit-modal').modal('show'); */
+                    exitSurvey();
+                    $('#user').val(jqXHR.responseJSON.userId);
+                    $('#attendance').val(jqXHR.responseJSON.attendance);
+                    break;
+                case 'mentor_in':
+                    success.show();
+                    success.delay(9000).hide("fade", {}, 1000, null);
+                    success.html('<strong>Success!</strong> Welcome ' + jqXHR.responseJSON.preferredName + '!');
+                    break;
+                case 'mentor_out':
+                    success.show();
+                    success.delay(9000).hide("fade", {}, 1000, null);
+                    success.html('<strong>Success!</strong> Goodbye ' + jqXHR.responseJSON.preferredName + '!');
+                    break;
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            switch (jqXHR.responseJSON.errorMessage) {
+                case 'malformed_scan':
+                    // rescan card again
+                    $('#error-modal').modal('show');
+                    $('#error-message').html('<strong>Scan failed!</strong> Please scan your card again.');
+                    break;
+                case 'unregistered_user':
+                    // register card
+                    $('#register-modal').modal('show');
+                    $('#swipe').val(jqXHR.responseJSON.swipe);
+                    break;
+                default:
+                    $('#error-modal').modal('show');
+                    $('#error-message').html('<strong>Something went wrong!</strong> Please try again. If this message continues please let the mentor know!');
+            }
+        });
+        this.reset();
+    }
+
+    function setActivity(activity) {
+        for(a in activity) {
+            var x = document.getElementById("activity");
+            var option = document.createElement("option");
+            option.text = activity[a].name;
+            option.value = activity[a].id;
+            x.add(option);
+        }
+    }
+
+    function setCourse(supportedCourses, unsupportedCourses) {
+        for(sc in supportedCourses) {
+            var x = document.getElementById("supported");
+            var option = document.createElement("option");
+            option.text = supportedCourses[sc].name;
+            option.value = supportedCourses[sc].id;
+            x.append(option);
+        }
+        for(usc in unsupportedCourses) {
+            var y = document.getElementById("unsupported");
+            var opt = document.createElement("option");
+            opt.text = unsupportedCourses[usc].name;
+            opt.value = unsupportedCourses[usc].id;
+            y.append(opt);
+        }
+    }
+
+    function setQuiz(quizzes) {
+        for(q in quizzes) {
+            var x = document.getElementById("quiz");
+            var option = document.createElement("option");
+            option.text = quizzes[q].name;
+            option.value = quizzes[q].id;
+            x.add(option);
+        }
+    }
+
+    var mentorsList = [];
+
+    function setMentors(mentors) {
+        for(m in mentors) {
+            var x = document.getElementById("mentors");
+            var option = document.createElement("option");
+            option.text = mentors[m].name;
+            option.value = mentors[m].id;
+            mentorsList.push(mentors[m].id);
+            x.add(option);
+        }
+    }
+
+    //entry survey
+    function entrySurvey() {
+        event.preventDefault();
+        var topic = $('#topic').val();
+        var activity = $('#activity').val();
+        var course = $('#course').val();
+        var quiz = $('#quiz').val();
+        var user = $('#user').val();
+        var success = $('#success');
+        var entry_form = $('#entry_form');
+        var input = $('#swipeCardId');
+
+        $.ajax({
+                    type: 'POST',
+                    url: window.location.protocol + '//' + window.location.host + '/mentor/swipe/ajax/entry',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    data: JSON.stringify({'topic' : topic, 'activity' : activity, 'course' : course, 'quiz' : quiz, 'user' : user}),
+                    beforeSend: function () {
+                        entry_form.hide();
+                        // $('#entry-loader').show();
+                    }
+                }).always(function () {
+                    input.get(0).focus();
+                    // $('#entry-loader').hide();
+                }).done(function (data,textStatus, jqXHR) {
+                    switch (jqXHR.responseJSON.successMessage) {
+                        case 'attendee_in':
+                            $('#entry-modal').modal('hide');
+
+                            success.show();
+                            success.delay(9000).hide("fade", {}, 1000, null);
+
+                            success.html('<strong>Success!</strong> Welcome ' + jqXHR.responseJSON.preferredName + '!');
+                            break;
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log("Swipe-in failed", textStatus);
+                });
+        this.reset();
+    }
+
+    function updateButtonState() {
+            var isAllowed = $('#activity').val() && $('#course').val() && $('#topic').val();
+            $('#entry-submit').prop('disabled', !isAllowed);
+        }
+
+    document.getElementById("activity").addEventListener("change", updateButtonState);
+    document.getElementById("course").addEventListener("change", updateButtonState);
+    document.getElementById("topic").addEventListener("input", updateButtonState);
+
+    updateButtonState();
+
+    $('#entry-modal').on('hidden.bs.modal', function () {
+        var topic = $('#topic');
+        topic.val('');
+
+        var activity = $('#activity');
+        activity.val('').change();
+        activity.empty().append('<option value="" selected disabled>Please Select</option>');
+
+        var course = $('#course');
+        course.val('').change();
+        course.empty().append('<option value="" selected disabled>Please Select</option>');
+        course.append('<optgroup label="Supported" id="supported"></optgroup>');
+        course.append('<optgroup label="Unsupported" id="unsupported"></optgroup>');
+
+        var quiz_label = $('#quizlabel');
+        quiz_label.hide();
+
+        var quiz = $('#quiz');
+        quiz.val('').change();
+        quiz.empty().append('<option value="" selected disabled>Please Select</option>');
+        quiz.hide();
+
+        var user = $('#user');
+        user.val('');
+
+        var input = $('#swipeCardId');
+        input.get(0).focus();
+    });
+
+    $('#entry-modal').on('shown.bs.modal', function () {
+        $('#entry_form').show();
+
+        var topic = $('#topic');
+        topic.val('');
+        topic.get(0).focus();
+
+        var activity = $('#activity');
+        activity.val('').change();
+
+        var course = $('#course');
+        course.val('').change();
+
+        var quiz_label = $('#quizlabel');
+        quiz_label.hide();
+
+        var quiz = $('#quiz');
+        quiz.val('').change();
+        quiz.hide();
+    });
+
+    $('#activity').on('change', function() {
+        var option = $('#activity option:selected').text();
+        var quiz_label = $('#quizlabel');
+        var quiz = $('#quiz');
+        if(option == 'Take a Quiz') {
+            quiz_label.show();
+            quiz.show();
+        } else {
+            quiz_label.hide();
+            quiz.val('').change();
+            quiz.hide();
+        }
+    });
+
+    //exit survey
+    function exitSurvey() {
+        event.preventDefault();
+        var success = $('#success');
+        var exit_form = $('#exit_form');
+        var input = $('#swipeCardId');
+        var feedback = $('#feedback').val();
+        var user = $('#user').val();
+        var attendance = $('#attendance').val();
+/*         var mentors = $('#mentors').val(); */
+        var mentors = mentorsList;
+
+        $.ajax({
+            type: 'POST',
+            url: window.location.protocol + '//' + window.location.host + '/mentor/swipe/ajax/exit',
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            data: JSON.stringify({'feedback' : feedback, 'user' : user, 'attendance' : attendance, mentors : mentors}),
+            beforeSend: function() {
+                exit_form.hide();
+                // $('#exit-loader').show();
+            }
+        }).always(function () {
+            // $('#exit-loader').hide();
+            input.get(0).focus();
+        }).done(function (date,textStatus,jqXHR) {
+            switch (jqXHR.responseJSON.successMessage) {
+                case 'attendee_out':
+                    $('#exit-modal').modal('hide');
+
+                    success.show();
+                    success.delay(9000).hide("fade", {}, 1000, null);
+                    success.html('<strong>Success!</strong> Goodbye ' + jqXHR.responseJSON.preferredName + '!');
+                    break;
+            }
+        }).fail(function (jqXHR,textStatus,errorThrown) {
+
+        });
+        this.reset();
+    }
+
+    $('#exit-modal').on('hidden.bs.modal', function () {
+        var mentors = $('#mentors');
+        mentors.val('').change();
+        mentors.empty().append('<option value="" selected disabled>Dont Know</option>');
+
+        var feedback = $('#feedback');
+        feedback.val('');
+
+        var user = $('#user');
+        user.val('');
+
+        var input = $('#swipeCardId');
+        input.get(0).focus();
+    });
+
+    $('#exit-modal').on('shown.bs.modal', function () {
+        $('#exit_form').show();
+
+        var mentors = $('#mentors');
+        mentors.val('').change();
+
+        var feedback = $('#feedback');
+        feedback.val('');
+    });
+
+    //register user
+    function registerUser() {
+        event.preventDefault();
+        var username_input = $('#username');
+        var username = username_input.val();
+
+        var password_input = $('#password');
+        var password = password_input.val();
+        password_input.val('');
+
+        var swipe = $('#swipe').val();
+        var register_form = $('#register_form');
+        var input = $('#swipeCardId');
+        var success = $('#success');
+
+        $.ajax({
+            type: 'POST',
+            url: window.location.protocol + '//' + window.location.host + '/mentor/swipe/ajax/register',
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            data: JSON.stringify({'username' : username, 'password' : password, 'swipe' : swipe, 'session' : null}),
+            beforeSend: function () {
+                register_form.hide();
+                // register_loader.show();
+            }
+        }).always(function () {
+            input.get(0).focus();
+            $('#register-modal').modal('hide');
+            // register_loader.hide();
+        }).done(function (data,textStatus, jqXHR) {
+            username_input.val('');
+            switch (jqXHR.responseJSON.successMessage) {
+                case 'entrance':
+                    setActivity(jqXHR.responseJSON.activity);
+                    setCourse(jqXHR.responseJSON.supportedCourses, jqXHR.responseJSON.unsupportedCourses);
+                    setQuiz(jqXHR.responseJSON.quizzes);
+                    $('#entry-modal').modal('show');
+                    $('#user').val(jqXHR.responseJSON.userId);
+                    break;
+                case 'mentor_in':
+                {# TODO better message #}
+                    success.show();
+                    success.delay(9000).hide("fade", {}, 1000, null);
+                    success.html('<strong>Success!</strong> Your card has been registered and welcome ' + jqXHR.responseJSON.preferredName + '!');
+                    break;
+                    {# other success messages should NOT occur, if they do something went really wrong #}
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            //register_form.show();
+            // register_warning.hide();
+            // register_error.show();
+            $('#error-modal').modal('show');
+            switch (jqXHR.responseJSON.errorMessage) {
+                case 'unregistered_user':
+                {# shouldn't happen #}
+                    $('#error-message').html('<strong>Card could not be registered!</strong> Please try again.');
+                    break;
+                case 'no_user':
+                {# TODO figure out how to handle #}
+                    break;
+                case 'ineligible':
+                    $('#error-message').html('<strong>Ineligible!</strong> Student is not enrolled for the Course.');
+                    break;
+                case 'bad_credentials':
+                    $('#error-message').html('<strong>Invalid Credentials!</strong> Please try again.');
+                    break;
+                case 'invalid':
+                {# shouldn't happen #}
+                    $('#error-message').html('<strong>Something went wrong!</strong> Please try again.');
+                    break;
+                default:
+                    $('#error-message').html('<strong>Something went wrong!</strong> Please try again. If this message continues please let the mentor know!');
+            }
+        });
+        this.reset();
+    }
+
+    $('#register-modal').on('shown.bs.modal', function () {
+        $('#register_form').show();
+        var username_input = $('#username');
+        username_input.val('');
+        username_input.get(0).focus();
+
+        var password_input = $('#password');
+        password_input.val('');
+    });
+
+    $('#register-modal').on('hidden.bs.modal', function () {
+        var username_input = $('#username');
+        username_input.val('');
+
+        var password_input = $('#password');
+        password_input.val('');
+
+        // $('#register-error').hide();
+        // $('#register-warning').show();
+
+        var input = $('#swipeCardId');
+        input.get(0).focus();
+    });
+
+</script>
+</body>
+</html>

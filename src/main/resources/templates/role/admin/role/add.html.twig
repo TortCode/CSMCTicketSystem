@@ -1,0 +1,53 @@
+{% extends "../base.html.twig" %}
+{% block body %}
+
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2> Add Roles </h2>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="x_content">
+
+                        {% set rolenameLength =  role.name| length %}
+                        {% set mypath = concat('/admin/user/role/edit/submit/', role.id, '/') %}
+                        {% if rolenameLength == 0 %}
+                            {% set mypath ='/admin/user/role/create/submit/' %}
+                        {% endif %}
+
+                        <form action="{{ path(mypath) }}" method="post">
+                            <label for="rolename">Role name</label>
+                            <br/>
+                            <input type="text" id="rolename" size="100" name="rolename" autocomplete="off"
+                                   value="{{ role.name }}" placeholder="Your role name..." required>
+                            <br/>
+
+                            <label for="description">Description</label>
+                            <br/>
+                            <input type="text" id="description" size="100" name="description" autocomplete="off"
+                                   value="{{ role.description }}" placeholder="">
+                            <br/>
+
+                            <button class="btn btn-success" type="submit">
+                                Submit
+                            </button>
+                            <a class="btn btn-danger" href="{{ path('/admin/user/role/') }}">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                Cancel
+                            </a>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+

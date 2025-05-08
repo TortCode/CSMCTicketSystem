@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{#    TODO: check me#}
+{#    <link rel="icon" type="image/png" href="{{ asset('build/images/favicon.png') }}">#}
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+
+    <title>Welcome!</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{#    TODO: check me#}
+{#    <link rel="stylesheet" type="text/css" href="{{ asset('build/css/global.css') }}" />#}
+    <link rel="stylesheet" type="text/css" href="assets/css/global.css" />
+
+</head>
+{#TODO: check me#}
+{#<body style="background: #FFFFFF url({{ asset('build/images/swipe-background.png') }}) no-repeat right top;">#}
+<body style="background-color: #FFFFFF; background-image: url('../../../assets/images/swipe-background.png'); background-repeat: no-repeat; alignment: right;">
+{% if message|length > 0 %}
+    <br/>
+    <div class="alert alert-danger" id="errorDiv">
+        <span class="close" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong> {{ message }} </strong>
+    </div>
+{% endif %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1>{{ session.topic }}</h1>
+                            <h1>
+                                <small>
+                                    Mentors:
+                                    {% for mentor in session.mentorPreferredName %}
+                                        {{- mentor -}}
+                                    {% endfor %}
+                                </small>
+                            </h1>
+                        </div>
+                    </div>
+                    <div style="height: 15vh"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3"></div>
+                <div class="col-xs-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2>Welcome! Sign In Here</h2>
+                        </div>
+                        <div class="panel-body">
+                            <form name="swipe_form" class="form-horizontal" class="form-label-left" method="post" onsubmit="updateSwipeTime('{{ session.timeSlotId }}' )">
+{#                            {{ form_errors(swipe_form) }}#}
+                                <div id="success" class="alert alert-success" style="display: none;"></div>
+                                {% if session.actualStartTime == null %}
+                                    <div id="warning" class="alert alert-warning">The mentor needs to start the session! </div>
+                                {% endif %}
+                                <div class="form-group">
+                                    <div>
+                                        <div id="loader" class="text-center" style="display: none;">
+{#                                            TODO: check me#}
+    {#                                        <img src="{{ asset('build/images/ajax-loader.gif') }}">#}
+                                            <img src="../../../assets/images/ajax-loader.gif">
+                                        </div>
+
+                                        <input type="password" id="swipeCardId" autofocus placeholder="Please swipe your Comet Card" class="form-control" name="swipe_form.scancode"/>
+
+                                        <div id="no-card-link" class="text-right">
+                                            <a id="no-card" class="text-right" data-toggle="modal"
+                                               data-target="#no-card-modal">I don't have my Comet Card</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-3"></div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="panel panel-default" style="min-height: 95vh; max-height: 98vh">
+                <div class="panel-heading">
+                    Session Roster
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Time In
+                        </th>
+                        <th>
+                            Signed In?
+                        </th>
+                        <th>
+                            Time Out
+                        </th>
+                        <th>
+                            Signed Out?
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set page_length = 20 %}
+                    {% set count = session.registrations|length %}
+                    {% set empty_seats = session.capacity - count %}
+                    {% set max = (session.capacity is divisible by(20)) ? (session.capacity) : ((session.capacity - (session.capacity % page_length)) + page_length) %}
+                    {% for student in session.registrations %}
+                        <tr class="active" id="{{ student.studentId }}">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ student.firstName }} ({{- student.userName -}})</td>
+
+                            {% set a = null %}
+                            {% for attendance in session.attendances %}
+                                {% if attendance.attendanceStudentId == student.studentId %}
+                                    {% set a = attendance %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if a is not null %}
+                                {% if a.timeIn is not null %}
+                                    <td>
+                                        {{ a.timeIn|date('hh:mm a') }}
+                                    </td>
+                                    <td><span class="glyphicon glyphicon-ok" style="color: green;"></span></td>
+                                {% else %}
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-remove" style="color: red;"></span></td>
+                                {% endif %}
+
+                                {% if a.timeOut is not null %}
+                                    <td>
+                                        {{ a.timeOut|date('hh:mm a') }}
+                                    </td>
+                                    <td><span class="glyphicon glyphicon-ok" style="color: green;"></span></td>
+                                {% else %}
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-remove" style="color: red;"></span></td>
+                                {% endif %}
+                            {% else %}
+                                <td></td>
+                                <td><span class="glyphicon glyphicon-remove" style="color: red;"></span></td>
+                                <td></td>
+                                <td><span class="glyphicon glyphicon-remove" style="color: red;"></span></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    {# TODO add students who have attended but not registered on page load #}
+                    {% for attendance in session.attendances %}
+                        {% set found = false %}
+                        {% for student in session.registrations %}
+                            {% if student.studentId == attendance.attendanceStudentId %}
+                                {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not found %}
+                            <tr id="{{ attendance.attendanceStudentId }}">
+                                {% set count = count + 1 %}
+                                <td>{{ count }}</td>
+                                <td>{{ attendance.firstName }} ({{- attendance.userName -}})</td>
+                                {% if attendance.timeIn is not null %}
+                                    <td>
+                                        {{ attendance.timeIn|date('hh:mm a') }}
+                                    </td>
+                                    <td><span class="glyphicon glyphicon-ok" style="color: green;"></span></td>
+                                {% else %}
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-remove" style="color: red;"></span></td>
+                                {% endif %}
+
+                                {% if attendance.timeOut is not null %}
+                                    <td>
+                                        {{ attendance.timeOut|date('hh:mm a') }}
+                                    </td>
+                                    <td><span class="glyphicon glyphicon-ok" style="color: green;"></span></td>
+                                {% else %}
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-remove" style="color: red;"></span></td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% for i in [count+1..max] %}
+                        <tr class="active" id="temp-{{ i }}">
+                            <td>{{ i }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="register-modal" tabindex="-1" role="dialog"
+         aria-labelledby="register-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="register-modal-label">No Comet Card Sign In</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="register-error" class="alert alert-danger" style="display: none;"></div>
+                    <div id="register-warning" class="alert alert-warning">
+                        <strong>Card not registered!</strong>
+                        Please enter your NetID and password to register this card.
+                    </div>
+                    <div id="register-loader" class="text-center" style="display: none;">
+{#                                            TODO: check me#}
+{#                        <img src="{{ asset('build/images/ajax-loader.gif') }}">#}
+                    </div>
+                    <form name="register_form" id="register_form" class="bt-flabels" class="js-flabels">
+                    <div class="form-group">
+                        <div class="control-label">
+                            UserName
+                        </div>
+{#                        {{ form_errors(register_form.username) }}#}
+                        <div class="bt-flabels__wrapper">
+                            <input type="text" id="username" class="form-control" />
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label">
+                            Password
+                        </div>
+{#                        {{ form_errors(register_form.password) }}#}
+                        <div class="bt-flabels__wrapper">
+                            <input type="password" id="password" class="form-control" />
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="swipe" />
+                    </div>
+                 </form>
+            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="register-submit" type="button" class="btn btn-success" onclick="registerUser()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="no-card-modal" tabindex="-1" role="dialog"
+         aria-labelledby="no-card-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="no-card-modal-label">Register Comet Card</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Having your Comet Card is a requirement to attend sessions hosted by the CSMC.
+                        However, we will allow you <b style="color: red;">one</b> sign in without your card per
+                        semester.
+                        If you choose to sign in with your Comet Card for this session, you will not be able to
+                        sign in without your Comet Card again this semester.
+                        <b>Your professor will also be notified that you did not have your Comet Card.</b>
+                    </p>
+                    <div id="no-card-error" class="alert alert-danger" style="display: none;"></div>
+                    <div id="no-card-loader" class="text-center" style="display: none;">
+{#                        <img src="{{ asset('build/images/ajax-loader.gif') }}">#}
+                    </div>
+{#                    {{ form_start(no_card_form, { 'attr': {'class': 'bt-flabels js-flabels'} }) }}#}
+                    <div class="form-group">
+                        <div class="control-label">
+{#                            {{ form_label(no_card_form.reason) }}#}
+                        </div>
+{#                        {{ form_errors(no_card_form.reason) }}#}
+                        <div class="bt-flabels__wrapper">
+{#                            {{ form_widget(no_card_form.reason, {'attr': {'class': 'form-control'}}) }}#}
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label">
+{#                            {{ form_label(no_card_form.username) }}#}
+                        </div>
+{#                        {{ form_errors(no_card_form.username) }}#}
+                        <div class="bt-flabels__wrapper">
+{#                            {{ form_widget(no_card_form.username, {'attr': {'class': 'form-control'}}) }}#}
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label">
+{#                            {{ form_label(no_card_form.password) }}#}
+                        </div>
+{#                        {{ form_errors(no_card_form.password) }}#}
+                        <div class="bt-flabels__wrapper">
+{#                            {{ form_widget(no_card_form.password, {'attr': {'class': 'form-control'}}) }}#}
+                            <span class="bt-flabels__error-desc">Required</span>
+                        </div>
+                    </div>
+{#                    {{ form_end(no_card_form) }}#}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="no-card-submit" type="button" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="error-modal" tabindex="-1" role="dialog"
+         aria-labelledby="error-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="error-modal-label">Error</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="error-message" class="alert alert-danger" role="alert">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Acknowledge</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.8.1/parsley.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.1/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.16/features/pageResize/dataTables.pageResize.min.js"></script>
+<script>
+    $(function () {
+        var table = $('.table').DataTable({
+            ordering: false,
+            info: false,
+            searching: false,
+            lengthChange: false,
+            pageLength: {{ page_length }}
+        });
+
+        var registered_students = {{ count }};
+        var next = registered_students + 1;
+
+    });
+
+    function updateSwipeTime(timeslot) {
+        event.preventDefault();
+        var scancode = document.getElementById("swipeCardId").value;
+        var temp = document.getElementById("swipeCardId");
+        var input = $('#swipeCardId');
+        var success = $('#success');
+
+        var check_out_student = function (id, time_out) {
+            var row = $('#' + id);
+
+            row.children('td:nth-child(5)').html(time_out);
+            row.children('td:nth-child(6)').html('<span class="glyphicon glyphicon-ok" style="color: green;"></span>');
+
+            var page = Math.floor(row.children('td:first-child').text() / {{ page_length }});
+            table.page(page).draw(false);
+        };
+
+        var check_in_student = function (id, name, time_in) {
+            var row = $('#' + id);
+            var page = 0;
+            if (row.length) {
+                row.removeClass('active');
+                page = Math.floor(row.children('td:first-child').text() / {{ page_length }});
+            } else {
+                row = $('#temp-' + next);
+                row.prop('id', id);
+                row.removeClass('active');
+                row.children('td:nth-child(2)').html(name);
+                row.children('td:nth-child(6)').html('<span class="glyphicon glyphicon-remove" style="color: red;"></span>');
+
+                page = Math.floor(next / {{ page_length }});
+
+                next++;
+            }
+
+            row.children('td:nth-child(3)').html(time_in);
+            row.children('td:nth-child(4)').html('<span class="glyphicon glyphicon-ok" style="color: green;"></span>');
+
+            table.page(page).draw(false);
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: window.location.protocol + '//' + window.location.host + '/mentor/swipe/ajax/session',
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            data: JSON.stringify({'scancode': scancode, 'timeSlotId': timeslot}),
+            beforeSend: function () {
+                input.hide();
+                // loader.show();
+                // no_card_link.hide();
+            }
+        }).always(function () {
+            temp.value = "";
+            input.show();
+            temp.focus();
+            // loader.hide();
+            // no_card_link.show();
+        }).done(function (data,textStatus, jqXHR) {
+            success.show();
+            success.delay(9000).hide("fade", {}, 1000, null);
+
+            {# TODO need to handle session start and end #}
+            {# TODO #}
+            switch (jqXHR.responseJSON.successMessage) {
+                case 'session_start':
+                    $('#warning').hide();
+                    success.html('<strong>Success!</strong> Session started!');
+                    break;
+                case 'session_end':
+                    // idk what to do here
+                    success.html('<strong>Session ended!</strong>');
+                    break;
+                case 'attendee_in':
+                    success.html('<strong>Success!</strong> Welcome ' + jqXHR.responseJSON.firstName + '!');
+                    check_in_student(jqXHR.responseJSON.userId, jqXHR.responseJSON.firstName, jqXHR.responseJSON.timeIn);
+                    break;
+                case 'attendee_out':
+                    success.html('<strong>Success!</strong> Goodbye ' + jqXHR.responseJSON.firstName + '!');
+                    check_out_student(jqXHR.responseJSON.userId, jqXHR.responseJSON.timeOut);
+                    break;
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            switch (jqXHR.responseJSON.errorMessage) {
+                case 'ineligible':
+                    $('#error-modal').modal('show');
+                    $('#error-message').html('<strong>Not eligible for session!</strong> You are not on the roster for any of the sections listed for this session.');
+                    break;
+                case 'session_needs_starting':
+                    $('#error-modal').modal('show');
+                    $('#error-message').html('<strong>Session not started!</strong> Mentor needs to swipe first.');
+                    break;
+                case 'session_already_ended':
+                    // no implementation in PHP code. Can implement the below thing.
+                    // $('#error-modal-label').modal('show');
+                    // $('#error-message').html('<strong>Session has already ended!</strong>);
+                    break;
+                case 'unregistered_user':
+                    $('#register-modal').modal('show');
+                    $('#swipe').val(jqXHR.responseJSON.swipe);
+                    break;
+                default:
+                    $('#error-modal').modal('show');
+                    $('#error-message').html('<strong>Something went wrong!</strong> Please try again. If this message continues please let the mentor know!');
+            }
+        });
+    }
+
+    //register user
+    function registerUser() {
+        event.preventDefault();
+        var username_input = $('#username');
+        var username = username_input.val();
+
+        var password_input = $('#password');
+        var password = password_input.val();
+        password_input.val('');
+
+        var swipe = $('#swipe').val();
+        var register_form = $('#register_form');
+        var input = $('#swipeCardId');
+        var success = $('#success');
+
+        $.ajax({
+            type: 'POST',
+            url: window.location.protocol + '//' + window.location.host + '/mentor/swipe/ajax/register',
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            data: JSON.stringify({'username' : username, 'password' : password, 'swipe' : swipe, 'session' : '{{ session.timeSlotId }}'}),
+            beforeSend: function () {
+                register_form.hide();
+                // register_loader.show();
+            }
+        }).always(function () {
+            input.get(0).focus();
+            $('#register-modal').modal('hide');
+            // register_loader.hide();
+        }).done(function (data,textStatus, jqXHR) {
+            username_input.val('');
+            $('#register-modal').modal('hide');
+            switch (jqXHR.responseJSON.successMessage) {
+                case 'attendee_in':
+                    success.html('<strong>Success!</strong> Your card has been registered and welcome ' + jqXHR.responseJSON.firstName + '!');
+                    check_in_student(jqXHR.responseJSON.userId, jqXHR.responseJSON.firstName, jqXHR.responseJSON.timeIn);
+                    break;
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            //register_form.show();
+            // register_warning.hide();
+            // register_error.show();
+            $('#error-modal').modal('show');
+            switch (jqXHR.responseJSON.errorMessage) {
+                case 'unregistered_user':
+                {# shouldn't happen #}
+                    $('#error-message').html('<strong>Card could not be registered!</strong> Please try again.');
+                    break;
+                case 'no_user':
+                {# TODO figure out how to handle #}
+                    break;
+                case 'ineligible':
+                    $('#error-message').html('<strong>Ineligible!</strong> Student is not enrolled for the Course.');
+                    break;
+                case 'bad_credentials':
+                    $('#error-message').html('<strong>Invalid Credentials!</strong> Please try again.');
+                    break;
+                case 'invalid':
+                {# shouldn't happen #}
+                    $('#error-message').html('<strong>Something went wrong!</strong> Please try again.');
+                    break;
+                default:
+                    $('#error-message').html('<strong>Something went wrong!</strong> Please try again. If this message continues please let the mentor know!');
+            }
+        });
+    }
+
+    $('#register-modal').on('shown.bs.modal', function () {
+        $('#register_form').show();
+        var username_input = $('#username');
+        username_input.val('');
+        username_input.get(0).focus();
+
+        var password_input = $('#password');
+        password_input.val('');
+    });
+
+    $('#register-modal').on('hidden.bs.modal', function () {
+        var username_input = $('#username');
+        username_input.val('');
+
+        var password_input = $('#password');
+        password_input.val('');
+
+        // $('#register-error').hide();
+        // $('#register-warning').show();
+
+        var input = $('#swipeCardId');
+        input.get(0).focus();
+    });
+
+
+</script>
+</body>
+</html>

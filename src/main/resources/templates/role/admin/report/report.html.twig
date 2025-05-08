@@ -1,0 +1,104 @@
+{% extends '../base.html.twig' %}
+{#{% extends '../../../shared/base.html.twig' %}#}
+{% block body %}
+    <div class="content_head">
+        <h2>Report</h2>
+        <h2 class="content_title">{{ chosen_section.course.department.abbreviation }} {{ chosen_section.course.number }}
+            .{{ chosen_section.number }} |
+            {% for i in chosen_section.instructors %}
+                {{ i.firstName }} {{ i.lastName }}{{ (loop.last) ? "" : ", " }}
+            {% endfor %}
+        </h2>
+        <h2 class="content_title">{{ chosen_session_name }}</h2>
+    </div>
+
+    {% if report is not null %}
+        <div class="content_head">
+            <div class="content_options">
+                {% if report_type == 'session' %}
+                    <a href="{{ path('report_download/session/' ~ chosen_section.id ~ '/' ~ session.id ) }}">
+                        <div class="btn btn-success">Download</div>
+                    </a>
+                {% else %}
+                    <a href="{{ path('report_download/walk_in/' ~ chosen_section.id) }}">
+                        <div class="btn btn-success">Download</div>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <table id="datatable" class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>NetID</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                {% if report_type == 'session' %}
+                    <th>Grade</th>
+                {% else %}
+                    <th>Topic</th>
+                    <th>Activity</th>
+                    <th>Feedback</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in report %}
+                <tr>
+                    {% if report_type == 'session' %}
+                        <td>{{ row.getKey().lastName }}</td>
+                        <td>{{ row.getKey().firstName }}</td>
+                        <td>{{ row.getKey().username }}</td>
+                        {% if row.getValue() is not null %}
+                            <td>{{ (row.getValue().timeIn is empty) ? "" : (row.getValue().timeIn|date('MM/dd hh:mm a')) }}</td>
+                            <td>{{ (row.getValue().timeOut is empty) ? "" : (row.getValue().timeOut|date('hh:mm a')) }}</td>
+                            {% if row.getValue().grade != null %}
+                                <td>
+                                    {% set grade = row.getValue().grade %}
+                                    {% if session.numericGrade %}
+                                        {{ grade }}
+                                    {% else %}
+                                        {{ (grade == 1) ? 'Pass' : 'Fail' }}
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% else %}
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        {% endif %}
+                    {% else %}
+                        <td>{{ row.user.lastName }}</td>
+                        <td>{{ row.user.firstName }}</td>
+                        <td>{{ row.user.username }}</td>
+                        <td>{{ (row.timeIn is empty) ? "" : (row.timeIn|date('MM/dd hh:mm a')) }}</td>
+                        <td>{{ (row.timeOut is empty) ? "" : (row.timeOut|date('hh:mm a')) }}</td>
+                        <td>{{ row.topic }}</td>
+                        <td>{{ row.activity.name }}</td>
+                        <td>{{ row.feedback }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            var table = $('#datatable').DataTable({
+                paging: false,
+                ordering: true,
+                searching: true,
+                buttons: [
+                    'csv'
+                ]
+            });
+        });
+    </script>
+{% endblock %}

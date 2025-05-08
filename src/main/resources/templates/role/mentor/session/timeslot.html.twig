@@ -1,0 +1,80 @@
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+	<h2>{{ timeslot.topic }}</h2>
+	<dl class="dl-horizontal">
+		<dt>Description</dt>
+		<dd>
+			{{ timeslot.description }}
+		</dd>
+		<dt>Student Instructions</dt>
+		<dd>
+			{{ timeslot.studentInstructions }}
+		</dd>
+		<dt>Mentor Instructions</dt>
+		<dd>
+			{{ timeslot.mentorInstructions }}
+		</dd>
+		<dt>Graded</dt>
+		<dd>
+			{{ (timeslot.graded) ? 'yes' : 'no' }}
+		</dd>
+		{% if timeslot.graded %}
+			<dt>Grading Scheme</dt>
+			<dd>{{ (timeslot.numericGrade) ? 'numeric' : 'pass/fail' }}</dd>
+		{% endif %}
+		<dt>Materials</dt>
+		{% if length(timeslot.files) != 0 %}
+			{% for file in timeslot.files %}
+				{% if not (loop.first) %}
+					<dt></dt>
+				{% endif %}
+				<dd>
+					<a href="{{ path(concat('/mentor/session/file/download/', file.fileId, '/timeSlot/', timeslotId)) }}">{{ file.name }}</a>
+				</dd>
+			{% endfor %}
+		{% else %}
+			<dd></dd>
+		{% endif %}
+		<dt>Date and Time</dt>
+		<dd>
+			{{ timeslot.startTime|date('MM-dd-yyyy hh:mm a') }}
+			-
+			{{ timeslot.endTime|date('MM-dd-yyyy hh:mm a') }}
+		</dd>
+		<dt>Room</dt>
+		<dd>{{ timeslot.location }}</dd>
+		<dt>Mentors</dt>
+		{% if timeslot.mentors is not null %}
+			{% for mentor in timeslot.mentors %}
+				{% if not (loop.first) %}
+					<dt></dt>
+				{% endif %}
+				<dd>{{ mentor }}</dd>
+			{% endfor %}
+		{% else %}
+			<dd></dd>
+		{% endif %}
+		<dt>Registrations</dt>
+		<dd>
+			{{ timeslot.registeredStudents }}/{{ timeslot.capacity }}
+		</dd>
+		//<dt>Download Roster</dt>
+		//<dd>
+		//	NYI
+		//	{#<a href="{{ path('session_timeslot_roster', {'tid': timeslot.id}) }}">Download</a>#}
+		//</dd>
+	</dl>
+	{% if timeslot.started and timeslot.ended %}
+		<button type="button" class="btn btn-default disabled" style="width: 80px">
+			Ended
+		</button>
+	{% else %}
+		<button type="button" class="btn btn-success" style="width: 80px" onclick="location.href='/mentor/swipe/session/{{timeslot.timeSlotId}}'">
+			{% if not (timeslot.started) %}
+				Start
+			{% else %}
+				Continue
+			{% endif %}
+		</button>
+	{% endif %}
+{% endblock %}

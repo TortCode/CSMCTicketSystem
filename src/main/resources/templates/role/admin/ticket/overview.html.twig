@@ -1,0 +1,99 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+    <h2>Semester Report: <span id="mentor-name"></span></h2>
+
+    <div class="chart-container">
+        <canvas id="ticketsChart"></canvas>
+    </div>
+
+    <div class="stats">
+        <h4>Average Tickets/Week: <span id="avg-tickets">{{stats.averageTicketsPerWeek}} </span> tickets</h4>
+        <h4>Average Help Time: <span id="avg-help-time">{{stats.averageHelpMinutes}} </span> minutes</h4>
+    </div>
+
+    <table id="ticket-overview" class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th>Course Name</th>
+        <th>Completed Tickets</th>
+        <th>Cancelled Tickets</th>
+    </tr>
+    </thead>
+    <tbody id="report-table">
+    {% for course in courses %}
+        {% set completed = 0 %}
+        {% set unclaimed = 0 %}
+
+        {% for detail in stats.courseDetails %}
+            {% if detail.course == course.number %}
+                {% set completed = detail.completed %}
+                {% set unclaimed = detail.unclaimed %}
+            {% endif %}
+        {% endfor %}
+
+        <tr>
+            <td>{{ course.number }}</td>
+            <td>{{ completed }}</td>
+            <td>{{ unclaimed }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+    <script>
+        $(function () {
+            var data = {
+                labels: [
+                    {% for dayDetail in stats.dayDetails %}
+                        "{{ dayDetail.startOfDay|date("yyyy/MM/dd H:mm") }}",
+                    {% endfor %}
+                ],
+                datasets: [
+                    {
+                        label: '# of tickets completed',
+                        data: [
+                            {% for dayDetail in stats.dayDetails %}
+                                {{ dayDetail.claimed }},
+                            {% endfor %}
+                        ],
+                        fill: false,
+                        backgroundColor: '#C75B12',
+                        borderColor: '#C75B12'
+                    }
+                ],
+            };
+            var options = {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: "Tickets Completed"
+                },
+                legend: {
+                    display: true,
+                    position: 'right'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            stepSize: 1
+                        }
+                    }]
+                }
+            };
+
+            var ctx = $('#ticketsChart');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        });
+    </script>
+{% endblock %}

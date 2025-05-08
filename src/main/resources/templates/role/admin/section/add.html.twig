@@ -1,0 +1,110 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2> Create Section</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal form-label-left" method="post"
+                              action="/admin/section/create/submit">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Course Number
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select id="cnumber" name="cnumber" class="form-control col-md-7 col-xs-12">
+                                        {% for course in courses %}
+                                            <option value="{{ course.id }}"> {{ course.department.abbreviation }} {{ course.number }}</option>
+                                        {% endfor %}
+                                    </select>
+			                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Section Number
+                            </label>                            
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="number" name="number" type="text" class="form-control col-md-7 col-xs-12" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Semester
+                            </label>
+
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select id="semester" name="semester" class="form-control col-md-7 col-xs-12">
+                                        {% for semester in semesters %}
+                                            <option value="{{ semester.id }}"> {{ semester.year }} {{ semester.season }}</option>
+                                        {% endfor %}
+                                    </select>
+			                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Instructor
+                            </label>
+
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select id="instructor" name="instructor" class="form-control col-md-7 col-xs-12">
+                                        {% for instructor in instructors %}
+                                            <option value="{{ instructor.id }}"> {{ instructor.firstName }} {{ instructor.lastName }}</option>
+                                        {% endfor %}
+                                    </select>
+			                </div>
+                        </div>
+
+	                    <div class="form-group">
+
+	                        <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+	                            Teaching Assistants
+	                        </label>	                        
+	                        <div class="col-md-6 col-sm-6 col-xs-12">
+	                            <textarea id="tassistant" name="tassistant" rows="7"
+	                                      class="form-control col-md-7 col-xs-12"></textarea>
+	                        </div>
+	                    </div>
+
+			    <div class="form-group">
+
+	                        <label class="control-label col-md-3 col-sm-3 col-xs-12" style="font-weight:200">
+	                            Admin Notes
+	                        </label>	                        
+	                        <div class="col-md-6 col-sm-6 col-xs-12">
+	                            <textarea id="description" name="description" rows="7"
+	                                      class="form-control col-md-7 col-xs-12"></textarea>
+	                        </div>
+	                    </div>
+
+                        <div class="ln_solid"></div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                <button class="btn btn-secondary" type="button" 
+					onclick="location.href='/admin/section'">
+                                    Cancel
+                                </button>
+                                    <button class="btn btn-success" type="submit">
+                                        Submit
+                                    </button>
+                            </div>
+                        </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+<section class="pt-5" id="features">
+            <div class="container px-5">
+                <div class="row gx-5">
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h2 class="fw-bolder mb-0">Locations</h2>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="row gx-5 row-cols-1 row-cols-md-2">
+                        {% if length(rooms) != 0 %}
+                                {% for room in rooms %}
+
+                                    <div class="col mb-5 h-100">
+                                         <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
+                                                                            class="bi bi-building"></i></div>
+                                         <h2 class="h5">
+                                            <a class="room_link" target="_blank" href="http://www.utdallas.edu/locator/{{ room.building ~ '_' ~ room.floor ~ '.' ~ room.number }}">
+                                                {{ room.building ~ ' ' ~ room.floor ~ '.' ~ room.number }}
+                                            </a>
+                                         </h2>
+                                         <p class="mb-0">{{ room.description }}</p>
+                                    </div>
+
+                                {% endfor %}
+                            {% else %}
+                                <dd style="text-align: left;">No Current Locations</dd>
+                                <div class="col mb-5 h-100">
+                                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                    <i class="bi bi-building"></i></div>
+                                      <h2 class="h5">
+                                          No Current Locations
+                                      </h2>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>

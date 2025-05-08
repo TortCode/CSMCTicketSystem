@@ -1,0 +1,124 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+
+    <div class="center_col" role="main">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Create Room</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                    <br/>
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal form-label-left" method="post"
+                                                      action="/admin/room/create/submit">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Building
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="building" name="building" type="text" class="form-control col-md-7 col-xs-12" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Floor
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="floor" name="floor" type="text" class="form-control col-md-7 col-xs-12" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Class Room Number
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="number" name="number" type="text" class="form-control col-md-7 col-xs-12" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Description
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="desc" name="desc" type="text" class="form-control col-md-7 col-xs-12" >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Capacity
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="capacity" name="capacity" type="text" class="form-control col-md-7 col-xs-12" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                Active
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input id="active" name="active" type="checkbox">
+                            </div>
+                        </div>
+
+                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-5">
+
+                            <button type="button" class="btn btn-secondary" onclick="location.href='/admin/room/list'">
+                                Cancel
+                            </button>
+                            <button id="submit" class="btn btn-success" type="submit">
+                                Submit
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+        $(document).ready(function() {
+            $('#submit').click(function(event){
+                var data = $('#capacity').val();
+                var len=data.length;
+                var capacity = 0;
+                var c=0;
+                var flag=0;
+                for(var i=0;i<len;i++)
+                {
+                  c=data.charAt(i).charCodeAt(0);
+                  if(c <48 || c >57)
+                  {
+                    alert("Please only numerical values");
+                    flag=1;
+                    event.preventDefault();
+                    break;
+                  }
+                }
+
+                if(flag==0)
+                {
+                    capacity = parseInt(data);
+                    if(len == 0 || capacity<0)
+                    {
+                        alert("Invalid");
+                        event.preventDefault();
+                    }
+                }
+
+            });
+        });
+        </script>
+
+{% endblock %}

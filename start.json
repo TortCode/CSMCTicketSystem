@@ -1,0 +1,27 @@
+{
+    "apps":[{
+	"name":"apache-config",
+	"script":"/etc/httpd/conf/switch_config.sh",
+	"args":["-otn"],
+	"node_args":[],
+	"exec_interpreter":"",
+	"exec_mode":"fork",
+	"autorestart":false
+     },
+     {
+        "name":"csmc-web",
+        "cwd":".",
+        "script":"/usr/bin/java",
+        "args":[
+            "-jar",
+            "/var/www/csmc/new/new-csmc-website-spring-2021/target/csmc_web-1.0.0.jar"
+        ],
+        "watch":[
+            "/var/www/csmc/new/new-csmc-website-spring-2021/target/csmc_web-1.0.0.jar"
+        ],
+        "node_args":[],
+        "log_date_format":"YYYY-MM-DD HH:mm Z",
+        "exec_interpreter":"",
+        "exec_mode":"fork"
+     }]
+}

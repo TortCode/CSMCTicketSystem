@@ -1,0 +1,481 @@
+{% extends '../base.html.twig' %}
+{% block body %}
+{#    <form class="bt-flabels js-flabels">#}
+<form class="bt-flabels js-flabels" method="post"
+      action={{ concat('/admin/session/edit/submit/', form.id, '/', form.sessionType) }}>
+
+    {% if form.sessionType == 0%}
+        <div class="form-group">
+            <div class="control-label">
+                Topic
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <input class="form-control" type="text" id="topic" name="topic" value="{{form.scheduledSession.topic  }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Type
+            </div>
+            <select id="type" name="type" class="form-control col-md-7 col-xs-12">
+                <option value="{{ form.scheduledSession.type }}"
+                        selected> {{ form.scheduledSession.type }}</option>
+                {% for type in form.scheduledSession.types %}
+                    {% if type != form.scheduledSession.type %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Description
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <textarea class="form-control" id="description" name="description" required>{{ form.scheduledSession.description }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Student Instructions
+            </div>
+            <div class="bt-flabels__wrapper">
+                <textarea class="form-control" id="studentInstruction" name="studentInstruction">{{ form.scheduledSession.studentInstructions }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Mentor Instructions
+            </div>
+            <div class="bt-flabels__wrapper">
+                <textarea class="form-control" id="mentorInstruction" name="mentorInstruction">{{ form.scheduledSession.mentorInstructions }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Sections
+            </div>
+            <div class="bt-flabels__wrapper">
+{#                <textarea class="form-control" id="sections" name="sections" required>{{ form.scheduledSession.sections }}</textarea>#}
+                <select class="form-control" id="sections" name="sections" multiple>
+                    {#                    Show the selected first - easy to see for user#}
+                    {% for sec in form.allSection %}
+                        {%  if sec in form.sectionSelected %}
+                            <option value="{{ sec }}" selected>{{ sec }}</option>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for sec in form.allSection %}
+                        {%  if (sec in form.sectionSelected)==false %}
+                            <option value="{{ sec }}">{{ sec }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Graded
+            </div>
+            <div class="form">
+                {% if form.scheduledSession.graded %}
+                    <input type="checkbox" name="graded" value="graded" checked>
+                {% else %}
+                    <input type="checkbox" name="graded" value="graded">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Numeric grade
+            </div>
+            <div class="form">
+                {% if form.scheduledSession.numericGrade %}
+                    <input type="checkbox" name="numericgrade" value="numericgrade" checked>
+                {% else %}
+                    <input type="checkbox" name="numericgrade" value="numericgrade">
+                {% endif %}
+            </div>
+        </div>
+
+
+{#        <div class="form-group">#}
+{#            <div class="control-label">#}
+{#                <label for="form_file" class="required">File</label>#}
+{#            </div>#}
+{#            <div class="bt-flabels__wrapper">#}
+{#                <input type="file" id="form_file" name="file" class="form-control" accept=".csv,text/csv,.xlsx">#}
+{#            </div>#}
+{#        </div>#}
+
+
+        <div class="form-group">
+            <div class="control-label">
+                Uploaded files
+            </div>
+            <div>
+                {% for file in form.scheduledSession.uploadedFiles %}
+                {% set parts = file|split(',') %}
+                    <div>
+                        <input class="check-box" type="checkbox" id="{{ parts[0] }}" name="{{ parts[0] }}" checked>
+                        <label for="{{ parts[0] }}"><a href="{{ path(parts[1]) }}">{{parts[0]}}</a></label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Color
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input  class="form-control" type="color" id="color" name="color" value="{{form.scheduledSession.color }}"><br>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Repeats
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input class="form-control" type="number" id="repeats" name="repeats"
+                       min="1" value="{{form.scheduledSession.repeats  }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Location
+            </div>
+            <select id="room" name="room" class="form-control col-md-7 col-xs-12">
+                <option value="{{ form.scheduledSession.location }}"
+                        selected> {{ form.scheduledSession.location }}</option>
+                {% for room in form.scheduledSession.rooms %}
+                    {% if room != form.scheduledSession.location %}
+                        <option value="{{ room }}">{{ room }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Capacity
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input class="form-control" type="number" id="capacity" name="capacity"
+                       min="1" max="50" value="{{form.scheduledSession.capacity }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                Duration (Hour - Minute)
+            </div>
+
+            <input type="number" id="durationH" name="durationH" min="0" max="23" value="{{ form.scheduledSession.durationH }}">
+            <input type="number" id="durationM" name="durationM" min="0" max="59" value="{{ form.scheduledSession.durationM }}">
+        </div>
+    {% endif %}
+
+    {% if  form.sessionType == 1%}
+        <div class="form-group">
+            <div class="control-label">
+                Topic
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <input class="form-control" type="text" id="topic" name="topic" value="{{ form.quiz.topic  }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Type
+            </div>
+            <select id="type" name="type" class="form-control col-md-7 col-xs-12">
+                <option value="{{ form.quiz.type }}"
+                        selected> {{ form.quiz.type }}</option>
+                {% for type in form.quiz.types %}
+                    {% if type != form.quiz.type %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Description
+            </div>
+
+            <div class="bt-flabels__wrapper">
+                <textarea class="form-control" id="description" name="description" required>{{ form.quiz.description }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Student Instructions
+            </div>
+            <div class="bt-flabels__wrapper">
+                <textarea class="form-control" id="studentInstruction" name="studentInstruction">{{ form.quiz.studentInstructions }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Mentor Instructions
+            </div>
+            <div class="bt-flabels__wrapper">
+                <textarea class="form-control" id="mentorInstruction" name="mentorInstruction">{{ form.quiz.mentorInstructions }}</textarea>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="control-label">
+                Sections
+            </div>
+            <div class="bt-flabels__wrapper">
+{#                <textarea class="form-control" id="sections" name="sections" required>{{ form.quiz.sections }}</textarea>#}
+                <select class="form-control" id="sections" name="sections" multiple>
+{#                    Show the selected first - easy to see for user#}
+                    {% for sec in form.allSection %}
+                        {%  if sec in form.sectionSelected %}
+                            <option value="{{ sec }}" selected>{{ sec }}</option>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for sec in form.allSection %}
+                        {%  if (sec in form.sectionSelected)==false %}
+                            <option value="{{ sec }}">{{ sec }}</option>
+                        {% endif %}
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Graded
+            </div>
+            <div class="form">
+                {% if form.quiz.graded %}
+                    <input type="checkbox" name="graded" value="graded" checked>
+                {% else %}
+                    <input type="checkbox" name="graded" value="graded">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Numberic grade
+            </div>
+            <div class="form">
+                {% if form.quiz.numericGrade %}
+                    <input type="checkbox" name="numericgrade" value="numericgrade" checked>
+                {% else %}
+                    <input type="checkbox" name="numericgrade" value="numericgrade">
+                {% endif %}
+            </div>
+        </div>
+
+
+{#        <form name="form" method="post" class="bt-flabels js-flabels" enctype="multipart/form-data"#}
+{#              action={{ concat('/admin/session/edit/uploadFile/', form.id, '/', form.sessionType) }}>#}
+{#            <div class="form-group">#}
+{#                <div class="control-label">#}
+{#                    <label for="form_file" class="required">File</label>#}
+{#                </div>#}
+{#                <div class="bt-flabels__wrapper">#}
+{#                    <input type="file" id="form_file" name="file" required="required" class="form-control" >#}
+{#                    <span class="bt-flabels__error-desc">Required</span>#}
+{#                </div>#}
+{#            </div>#}
+{#            <button type="submit" id="form_submit" name="form[submit]" class="btn btn-default">Submit</button>#}
+{#            <input type="submit" class="btn btn-primary" value="Upload">#}
+{#        </form>#}
+
+
+        <div class="form-group">
+            <div class="control-label">
+                Uploaded files
+            </div>
+            <div>
+                {% for file in form.quiz.uploadedFiles %}
+                    <div>
+                        <input class="check-box" type="checkbox" id="{{ file }}" name="{{ file }}" checked>
+                        <label for="{{ file }}">{{file}}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Color
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input  class="form-control" type="color" id="color" name="color" value="{{form.quiz.color  }}"><br>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="control-label">
+                Room
+            </div>
+            <select id="room" name="room" class="form-control col-md-7 col-xs-12">
+                <option value="{{ form.quiz.room }}"
+                        selected> {{ form.quiz.room }}</option>
+                {% for room in form.quiz.rooms %}
+                    {% if room != form.quiz.room %}
+                        <option value="{{ room }}">{{ room }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                Start Date
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input class="form-control" type="date" id="startDate" name="startDate" value="{{form.quiz.startDate  }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label">
+                End Date
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input class="form-control" type="date" id="endDate" name="endDate" value="{{form.quiz.endDate  }}" required>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <div class="modal-footer">
+        <a class="btn btn-default" href="{{ path('/admin/session/request/') }}">Close</a>
+        <button id="session-submit" type="submit" class="btn btn-success">
+            Submit
+        </button>
+{#        <button id="form_submit" class="btn btn-success" type="submit" data-toggle="modal"#}
+{#                data-target="#myModalEdit">#}
+{#            Submit#}
+{#        </button>#}
+    </div>
+
+</form>
+
+    <form name="form" method="post" class="bt-flabels js-flabels" enctype="multipart/form-data"
+          action={{ concat('/admin/session/edit/uploadFile/', form.id, '/', form.sessionType) }}>
+        <div class="form-group">
+            <div class="control-label">
+                <label for="form_file" class="required">Upload File</label>
+            </div>
+            <div class="bt-flabels__wrapper">
+                <input type="file" id="form_file" name="file" required="required" class="form-control" multiple>
+                <span class="bt-flabels__error-desc">Required</span>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Upload">
+    </form>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+
+            var text = $('#scheduled_session_session_type option:selected').text();
+            if (text == 'quiz') {
+                $('#session-submit').data('active', 'quiz');
+
+                $('[name="scheduled_session"]').hide();
+                $('[name="quiz"]').show();
+            } else {
+                $('#session-submit').data('active', 'scheduled_session');
+
+                $('[name="quiz"]').hide();
+                $('[name="scheduled_session"]').show();
+            }
+
+            $('#scheduled_session_session_type').on('change', function () {
+                var text = $('option:selected', $(this)).text();
+                if (text == 'quiz') {
+                    $('#session-submit').data('active', 'quiz');
+
+                    $('[name="scheduled_session"]').hide();
+                    $('[name="quiz"]').show();
+
+                    sync_data('#scheduled_session', '#quiz');
+                }
+            });
+
+            $('#quiz_session_type').on('change', function () {
+                var text = $('option:selected', $(this)).text();
+                if (text == 'review' || text == 'rework') {
+                    $('#session-submit').data('active', 'scheduled_session');
+
+                    $('[name="quiz"]').hide();
+                    $('[name="scheduled_session"]').show();
+
+                    sync_data('#quiz', '#scheduled_session');
+                }
+            });
+
+            var sync_data = function (one, two) {
+                var topic = $(one + '_session_topic').val();
+                $(two + '_session_topic').val(topic);
+
+                var type = $(one + '_session_type').val();
+                $(two + '_session_type').val(type);
+
+                var description = $(one + '_session_description').val();
+                $(two + '_session_description').val(description);
+
+                var sInstr = $(one + '_session_studentInstructions').val();
+                $(two + '_session_studentInstructions').val(sInstr);
+
+                var mInstr = $(one + '_session_mentorInstructions').val();
+                $(two + '_session_mentorInstructions').val(mInstr);
+
+                // sections
+                var sections = [];
+                $.each($(one + '_session_sections option:selected'), function () {
+                    sections.push($(this).val());
+                });
+                $(two + '_session_sections').val(sections);
+                $(two + '_session_sections').trigger('change');
+
+                var graded = $(one + '_session_graded').is(':checked');
+                $(two + '_session_graded').prop('checked', graded);
+
+                var numeric = $(one + '_session_numericGrade').is(':checked');
+                $(two + '_session_numericGrade').prop('checked', numeric);
+
+                // files
+
+                var color = $(one + '_session_color').val();
+                $(two + '_session_color').val(color);
+            };
+
+            $('#session-submit').on('click', function () {
+                $('[name="' + $(this).data('active') + '"]').submit();
+            });
+        });
+    </script>
+{% endblock %}

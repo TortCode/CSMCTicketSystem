@@ -1,0 +1,104 @@
+{# For use with instructors/students #}
+{% extends '../../../shared/base.html.twig' %}
+{% block body %}
+    {#{% include '../../../shared/component/flash_messages.html.twig' %}#}
+    {% for course in courses %}
+        <h3>
+            {{ course.section.course.department.abbreviation }} {{ course.section.course.number -}}
+            .{{ course.section.number -}}
+            : {{ course.section.course.name }}
+        </h3>
+        <h2>Quizzes</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Topic</th>
+                <th>Dates</th>
+                <th>Room</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for quiz in course.quizzes %}
+                <tr>
+                    <td>{{ quiz.topic }}</td>
+                    <td class="quizDates">{{ quiz.startDate }} ~ {{ quiz.endDate }}</td>
+                    <td>{{ quiz.room }}</td>
+                    <td>{{ quiz.description }}</td>
+                </tr>
+            {% endfor %}
+            {% if course.quizzes is empty %}
+                <tr>
+                    <td colspan="4">No upcoming quizzes.</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        <br>
+        <h2>Sessions</h2>
+        {% for session in course.sessions %}
+            <h4>{{ session.topic }}
+                <a class="btn btn-success pull-right" href="{{ path(concat( '/instructor/session/schedule/session/view/', session.id)) }}">
+                    View Details
+                </a>
+            </h4>
+            <dl class="dl-horizontal">
+                <dt>Description</dt>
+                <dd>{{ session.description }}</dd>
+                <dt>Time Slots</dt>
+                {% for timeslot in session.timeslots %}
+                    <dd class="timeSlots">
+                        {{ timeslot.startTime }} ~ {{ timeslot.endTime }}
+                    </dd>
+                    {% if not loop.last %}
+                        <dt></dt>
+                    {% endif %}
+                {% endfor %}
+                {% if session.timeslots is empty %}
+                    <dd>None</dd>
+                {% endif %}
+            </dl>
+        {% endfor %}
+        {% if course.sessions is empty %}
+            <p>No sessions currently scheduled.</p>
+        {% endif %}
+        <br>
+    {% endfor %}
+    {% if courses is empty %}
+        <div class="alert alert-danger">You are not currently assigned to any courses. If this is an error please
+            contact a CSMC Admin
+        </div>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(".timeSlots").each(function(){
+            var timeSlot = $(this).html().trim();
+            var start = moment(new Date(timeSlot.substring(0, timeSlot.indexOf("~")).trim()));
+            var end = moment(new Date(timeSlot.substring(timeSlot.indexOf("~") + 1).trim()));
+            if(start.isValid() && end.isValid()){
+                var formattedStart = start.format("MM/DD/YY hh:mm A");
+                var formattedEnd = end.format("hh:mm A");
+                $(this).html(formattedStart + " - " + formattedEnd);
+            } else {
+                $(this).html("N/A");
+            }
+
+        });
+
+        $(".quizDates").each(function(){
+            var timeSlot = $(this).html().trim();
+            var start = moment(new Date(timeSlot.substring(0, timeSlot.indexOf("~")).trim()));
+            var end = moment(new Date(timeSlot.substring(timeSlot.indexOf("~") + 1).trim()));
+            if(start.isValid() && end.isValid()){
+                var formattedStart = start.format("MM/DD/YY");
+                var formattedEnd = end.format("MM/DD/YY");
+                $(this).html(formattedStart + " - " + formattedEnd);
+            } else {
+                $(this).html("N/A");
+            }
+        });
+    </script>
+{% endblock %}
+

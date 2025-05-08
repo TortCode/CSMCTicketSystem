@@ -1,0 +1,57 @@
+{% extends '../../../../shared/base.html.twig' %}
+{% block body %}
+    <form  action="{{ path(concat('/mentor/attend/submit/',attendanceGrade.sessionId ))}}" method="post">
+        <h2>
+            Mark Student as Attended
+        </h2>
+        <table>
+            <tr>
+                <td style="text-align:center">
+                    <label for="users">User:</label>
+                    <br/><br/>
+                </td>
+                <td style="text-align:center">
+                    <select id="users" name = "users" style="width: 200px" required>
+                        <option value="">Type Student Name</option>
+                        {% for user in attendanceGrade.users %}
+                            <option value = {{ user.username }}>{{ user.firstName~" "~user.lastName~" ("~user.username~")"}}</option>
+                        {% endfor %}
+                    </select>
+                    <br/><br/>
+                </td>
+
+            </tr>
+            <tr>
+
+                {% if attendanceGrade.sessionType != "quiz" %}
+                    <td style="text-align:center">
+                        <label for="timeSlot">Time Slot:</label>
+                        <br/><br/>
+                    </td>
+                    <td style="text-align:center">
+                        <select id = "timeSlot" name = "timeSlot" style="width: 200px" required>
+                            <option value="">Select TimeSlot</option>
+                            {% for time in attendanceGrade.timeSlot %}
+                                <option value = {{ time.id }}>{{ time.startTime|date('MM/dd hh:mm a') }} - {{time.endTime|date('hh:mm a')}}</option>
+                            {% endfor %}
+                        </select>
+                        <br/><br/>
+                    </td>
+               {% else %}
+                    <td style="text-align:center">
+                        <label for="grade">Grade:</label>
+                        <br/><br/>
+                    </td>
+                    <td style="text-align:center">
+                        <input id = "grade" name = "grade" style="width: 200px" placeholder="Enter Grade" type="number" min="0" max="100" required>
+                        <br/><br/>
+                    </td>
+                    <input type="hidden" id="timeSlot" name="timeSlot" value="{{attendanceGrade.timeSlot|first.id}}">
+                {%endif%}
+            </tr>
+        </table>
+        <br/>
+        <button class="btn btn-success"  type="submit"> Submit </button>
+    </form>
+
+{% endblock %}

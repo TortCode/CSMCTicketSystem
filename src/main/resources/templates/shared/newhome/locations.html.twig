@@ -1,0 +1,18 @@
+<h4>Locations</h4>
+<h5>
+<dl class="dl-horizontal">
+    {% if length(rooms) != 0 %}
+        {% for room in rooms %}
+            <dt style="text-align: left;">
+                <a class="room_link" target="_blank"
+                   href="http://www.utdallas.edu/locator/{{ room.building ~ '_' ~ room.floor ~ '.' ~ room.number }}">
+                    {{ room.building ~ ' ' ~ room.floor ~ '.' ~ room.number }}
+                </a>
+            </dt>
+            <dd style="text-align: left;">{{ room.description }}</dd>
+        {% endfor %}
+    {% else %}
+        <dd style="text-align: left;">No Current Locations</dd>
+    {% endif %}
+</dl>
+</h5>
